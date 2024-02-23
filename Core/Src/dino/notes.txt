@@ -1,0 +1,7 @@
+
+Type:
+    fill
+    sprite 
+    text
+    
+Coordonées

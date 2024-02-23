@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "includePath": [
+        "${workspaceFolder}/Core/Inc/**",
+        "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/**",
+        "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/**",
+        "/opt/st/stm32cubeide_1.14.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.linux64_1.1.100.202309141235/tools/lib/gcc/arm-none-eabi/11.3.1/include"
+      ],
+      "browse": {
+        "path": ["${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc/"],
+        "limitSymbolsToIncludedHeaders": false
+      }
+    }
+  ],
+  "version": 4
+}

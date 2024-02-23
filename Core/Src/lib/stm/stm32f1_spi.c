@@ -135,7 +135,7 @@ void SPI_WriteNoRegister(SPI_TypeDef* SPIx, uint8_t data)
  * @param *data est la donn�e � envoyer.
  * @param count est le nombre de donn�es � envoyer.
  */
-void SPI_WriteMultiNoRegister(SPI_TypeDef* SPIx, uint8_t* data, uint16_t count)
+void SPI_WriteMultiNoRegister(SPI_TypeDef* SPIx, void* data, uint16_t count)
 {
 	assert(SPIx == SPI1 || SPIx == SPI2);
 	SPI_ID_e id = ((SPIx == SPI2)?SPI2_ID:SPI1_ID);

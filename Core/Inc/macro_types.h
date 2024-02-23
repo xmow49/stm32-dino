@@ -9,7 +9,7 @@
 #define MACRO_TYPES_H_
 #include <stdio.h>
 
-//Macro permettant d'activer un envoi sur l'UART de ce qui est affiché sur le LCD...
+//Macro permettant d'activer un envoi sur l'UART de ce qui est affichï¿½ sur le LCD...
 //Utile si on a pas de LCD par exemple.
 #define PRINT_ON_UART_LCD_DISPLAY
 
@@ -30,7 +30,7 @@
 		END_ERROR,
 		END_TIMEOUT
 	}running_e;
-	//Enum renvoyée par une machine à états.
+	//Enum renvoyï¿½e par une machine ï¿½ ï¿½tats.
 
 	typedef unsigned char Uint8;
 	typedef signed char Sint8;
@@ -47,8 +47,8 @@
 	#define U32FROMU16(high,low)		((((Uint32)(high))<<16)|(Uint32)(low))
 	#define U32FROMU8(higher,high,low,lower)		((((Uint32)(higher))<<24)|(((Uint32)(high))<<16)|(((Uint32)(low))<<8)|(Uint32)(lower))
 	#define BITS_ON(var, mask)		((var) |= (mask))
-	/* ~0 est le complement à 1 de 0, donc pour 16 bits OxFFFF) */
-	/* ~0 ^ mask permet d'etre indépendant de la taille (en bits) de ~mask */
+	/* ~0 est le complement ï¿½ 1 de 0, donc pour 16 bits OxFFFF) */
+	/* ~0 ^ mask permet d'etre indï¿½pendant de la taille (en bits) de ~mask */
 	#define BITS_OFF(var, mask)		((var) &= ~0 ^ (mask))
 	#define BIT_SET(var, bitno)		((var) |= (1 << (bitno)))
 	#define BIT_CLR(var, bitno)		((var) &= ~(1 << (bitno)))
@@ -60,11 +60,11 @@
 	#define nop()					__asm__("nop")
 	/* la fonction valeur absolue pour des entiers */
 	#define absolute(x)					(((x) >= 0) ? (x) : (-(x)))
-	#define MODULO(x, N) ((x % N + N) % N)		//vrai modulo, avec un résultat non signé. Car l'opérateur % renvoit le reste signé de la division entière.
+	#define MODULO(x, N) ((x % N + N) % N)		//vrai modulo, avec un rï¿½sultat non signï¿½. Car l'opï¿½rateur % renvoit le reste signï¿½ de la division entiï¿½re.
 
 
 #if !TRACE
-	#define assert(condition) if(!(condition)) {printf("assert failed file " __FILE__ " line %d : %s", __LINE__ , #condition ); NVIC_SystemReset();}
+//	#define assert(condition) if(!(condition)) {printf("assert failed file " __FILE__ " line %d : %s", __LINE__ , #condition ); NVIC_SystemReset();}
 #else
 	#include "trace/Trace.h"
 	#define assert(condition) if(!(condition)) {trace_printf("assert failed file " __FILE__ " line %d : %s", __LINE__ , #condition ); NVIC_SystemReset();}

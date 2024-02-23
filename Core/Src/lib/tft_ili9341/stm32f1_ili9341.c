@@ -96,7 +96,7 @@ uint8_t ILI9341_INT_CalledFromPuts = 0;
 /* Private functions */
 void ILI9341_InitLCD(void);
 void ILI9341_SendData(uint8_t data);
-void ILI9341_ReadDatas(uint8_t command_to_write, uint8_t *datas, uint8_t nb_to_read);
+void ILI9341_ReadDatas(uint8_t command_to_write, uint8_t *datas, uint16_t nb_to_read);
 void ILI9341_SendCommand(uint8_t data);
 void ILI9341_Delay(volatile unsigned int delay);
 void ILI9341_SetCursorPosition(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
@@ -161,8 +161,8 @@ void ILI9341_Init(void)
 
 	/* Set default settings */
 	ILI9341_x = ILI9341_y = 0;
-//	ILI9341_Rotate(ILI9341_Orientation_);
-	ILI9341_Rotate(ILI9341_Orientation_Landscape_1);	//Utiliser cette fonction pour modifier l'orientation en paysage
+	//	ILI9341_Rotate(ILI9341_Orientation_);
+	ILI9341_Rotate(ILI9341_Orientation_Landscape_1); // Utiliser cette fonction pour modifier l'orientation en paysage
 
 	/* Fill with white color */
 	ILI9341_Fill(ILI9341_COLOR_WHITE);
@@ -379,7 +379,7 @@ void ILI9341_SendData(uint8_t data)
 	ILI9341_CS_SET();
 }
 
-void ILI9341_ReadDatas(uint8_t command_to_write, uint8_t *datas, uint8_t nb_to_read)
+void ILI9341_ReadDatas(uint8_t command_to_write, uint8_t *datas, uint16_t nb_to_read)
 {
 	ILI9341_CS_RESET();
 	ILI9341_WRX_RESET();
@@ -1124,6 +1124,8 @@ void ILI9341_putImage(int16_t x0, int16_t y0, int16_t width, int16_t height, con
 
 void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, const int16_t *img, int32_t size)
 {
+	x0++;
+	y0++;
 	ILI9341_SetCursorPosition(x0, y0, x0 + (width * scale) - 1, y0 + (height * scale) - 1);
 
 	uint8_t datas[2];

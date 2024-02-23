@@ -21,7 +21,7 @@ void SPI_ReadMultiNoRegister(SPI_TypeDef* SPIx, uint8_t* data, uint16_t count);
 
 void SPI_WriteNoRegister(SPI_TypeDef* SPIx, uint8_t data);
 
-void SPI_WriteMultiNoRegister(SPI_TypeDef* SPIx, uint8_t* data, uint16_t count);
+void SPI_WriteMultiNoRegister(SPI_TypeDef* SPIx, void* data, uint16_t count);
 
 uint8_t SPI_WriteRead(SPI_TypeDef* SPIx, uint8_t Value);
 
