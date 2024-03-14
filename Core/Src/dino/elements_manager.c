@@ -75,7 +75,7 @@ const element_t elements_list[] = {
 
 
     {TYPE_FILL,     ID_SKY,         0,  0,     320, 168,   .data.fill = {COLOR_SKY_LIGHT}},
-    {TYPE_FILL,     ID_GROUND,      0,  168,   320, 72,    .data.fill = {COLOR_GROUND_LIGHT}},
+    {TYPE_FILL,     ID_GROUND,      0,  169,   320, 72,    .data.fill = {COLOR_GROUND_LIGHT}},
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
@@ -97,31 +97,34 @@ int elements_manager_update_full_screen()
         {
             // add backgound to the framebuffer
             uint16_t framebuffer_x_offset = element->x;
-            uint16_t framebuffer_y_offset = element->y;
-            uint16_t framebuffer_index = 0;
-            for (int i = elements_count - 1; i >= 0; i--)
+            uint16_t framebuffer_y_offset = element->y+1;
+            int32_t framebuffer_index = (element->height) * element->data.sprite.scale * element->width * element->data.sprite.scale-1;
+            for (int j = elements_count - 1; j >= 0; j--)
             {
-                const element_t *bg_element = &elements_list[i];
+                const element_t *bg_element = &elements_list[j];
+                uint16_t bg_max_x = bg_element->x + bg_element->width;
+                uint16_t bg_max_y = bg_element->y + bg_element->height;
                 if (bg_element->type != TYPE_FILL)
                 {
                     continue;
                 }
-                for (int y = framebuffer_y_offset; y < framebuffer_y_offset + element->height; y++)
+                for (int y = framebuffer_y_offset; y < framebuffer_y_offset + (element->height * element->data.sprite.scale); y++)
                 {
-                    for (int x = framebuffer_x_offset; x < framebuffer_x_offset + element->width; x++)
+                    for (int x = framebuffer_x_offset; x < framebuffer_x_offset + (element->width * element->data.sprite.scale); x++)
                     {
                         // framebuffer[framebuffer_index] = bg_element->data.fill.color;
-                        if (x > bg_element->x && x < bg_element->x + bg_element->width && y > bg_element->y && y < bg_element->y + bg_element->height)
+                        if (x >= bg_element->x && x <= bg_max_x && y >= bg_element->y && y <= bg_max_y)
                         {
-                            framebuffer[framebuffer_index] = bg_element->data.fill.color;
-                            framebuffer_index++;
+                            if(framebuffer_index >= 0){
+                            	framebuffer[framebuffer_index] = bg_element->data.fill.color;
+                            	framebuffer_index--;
+                            }
                         }
                     }
                 }
             }
-
-            fb_draw_bitmap(framebuffer, element->x, element->y, element->width, element->height, element->data.sprite.sprite, element->width * element->height);
-            ILI9341_putBitmap(element->x, element->y, element->width, element->height, element->data.sprite.scale, framebuffer, element->width * element->height);
+            fb_draw_bitmap(framebuffer, element->x, element->y, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale);
+            ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
         }
     }
     return 0;

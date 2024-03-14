@@ -17,19 +17,27 @@ void fb_draw_filled_rectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
     // }
 }
 
-void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width, int16_t height, const int16_t *img, int32_t size)
+void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width, int16_t height, const uint16_t *img, uint8_t scale)
 {
-    for (int16_t y = 0; y < height; y++)
+    uint32_t fb_index = 0;
+    for (int32_t y = 0; y < height; y++)
     {
-
-        for (int16_t x = 0; x < width; x++)
+        for (int32_t k = 0; k < scale; k++)
         {
-            if (img[y * width + x] == 0)
+            for (int32_t x = 0; x < width; x++)
             {
-                continue;
+                for (int32_t j = 0; j < scale; j++)
+                {
+                    if (img[y * width + x] == 0)
+                    {
+                    	fb_index++;
+                        continue;
+                    }
+                    framebuffer[fb_index++] = img[y * width + x];
+                }
             }
-
-            framebuffer[y * width + x] = img[y * width + x];
         }
     }
+
+    fb_index++;
 }
