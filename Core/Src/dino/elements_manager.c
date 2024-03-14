@@ -9,18 +9,17 @@
 #include <stdlib.h>
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 
-
 // clang-format off
 element_t elements_list[] = {
-    // {TYPE_SPRITE,   ID_DINO,        82,  124,    20, 22,  .data.sprite = {2, sprite_dino_stand}},
-    // {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus}},
+    {TYPE_SPRITE,   ID_DINO,        82,  124,    20, 22,  .data.sprite = {2, sprite_dino_stand}},
+//    {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus}},
 
     {TYPE_SPRITE,   ID_CACTUS_1,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus}},
 
 
     // {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,  9,  .data.sprite = {3, sprite_gameover}},
 
-    // {TYPE_SPRITE,   ID_COPYRIGHT,   31,  175,   129,  26,  .data.sprite = {2, sprite_copyright}},
+//    {TYPE_SPRITE,   ID_COPYRIGHT,   31,  175,   129,  26,  .data.sprite = {2, sprite_copyright}},
 
 
     {TYPE_FILL,     ID_SKY,         0,  0,     320, 168,   .data.fill = {COLOR_SKY_LIGHT}},
@@ -40,7 +39,7 @@ int elements_manager_update_full_screen()
         const element_t *element = &elements_list[i];
         if (element->type == TYPE_FILL)
         {
-            //            ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
+            ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
         }
         else if (element->type == TYPE_SPRITE)
         {
@@ -128,8 +127,28 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         uint16_t fb_width = element->width * element->data.sprite.scale + abs(element->x - target_x);
         uint16_t fb_height = element->height * element->data.sprite.scale + abs(element->y - target_y);
 
+        uint16_t bitmap_x = 0;
+        uint16_t bitmap_y = 0;
+
         fb_generate_background(framebuffer, element->x, element->y + 1, fb_width, fb_height);
-        fb_draw_bitmap(framebuffer, fb_width - (element->width * element->data.sprite.scale), fb_height - (element->height * element->data.sprite.scale), element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, fb_width);
+        if ((int32_t)element->x - (int32_t)target_x < 0)
+        {
+            bitmap_x = fb_width - (element->width * element->data.sprite.scale);
+        }
+        else
+        {
+            bitmap_x = 0;
+        }
+
+        if ((int32_t)element->y - (int32_t)target_y < 0)
+        {
+            bitmap_y = fb_height - (element->height * element->data.sprite.scale);
+        }
+        else
+        {
+            bitmap_y = 0;
+        }
+        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, fb_width);
         ILI9341_putBitmap(element->x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         element->x = target_x;
         element->y = target_y;
@@ -143,7 +162,7 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     element->y = target_y;
 
     fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
-    fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width*element->data.sprite.scale);
+    fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
     ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
 
     return 0;

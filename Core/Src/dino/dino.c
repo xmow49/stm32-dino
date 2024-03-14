@@ -25,10 +25,10 @@ int dino_main(void)
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
 	// Attention, les pins PA2 et PA3 ne sont pas reli�es jusqu'au connecteur de la Nucleo.
 	// Ces broches sont redirig�es vers la sonde de d�bogage, la liaison UART �tant ensuite encapsul�e sur l'USB vers le PC de d�veloppement.
-//		UART_init(UART2_ID, 115200);
+	//		UART_init(UART2_ID, 115200);
 
 	//"Indique que les printf sortent vers le p�riph�rique UART2."
-//		SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
+	//		SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
 
 	// Initialisation du port de la led Verte (carte Nucleo)
 	BSP_GPIO_PinCfg(LED_GREEN_GPIO, LED_GREEN_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
@@ -42,26 +42,41 @@ int dino_main(void)
 	// ILI9341_putBitmap(77, 124, 20, 22, 2, sprite_dino_stand, 20 * 22);
 
 	elements_manager_update_full_screen();
-	fb_send_full_screen();
 
-	uint16_t x = 0;
-	uint16_t y = 134;
 	while (1)
 	{
 
-		for (int i = 0; i < 320; i++)
+		for (int i = 320; i > 0; i--)
 		{
-			elements_manager_move_element(ID_CACTUS_1, i, y);
+			elements_manager_move_element(ID_CACTUS_1, i, 140);
 		}
-		elements_manager_update_full_screen();
+		//
+		//		elements_manager_move_element(ID_DINO, 82, 124);
 
-		// if (!readButton())
-		// {
-		// 	for (int i = 124; i > 100; i--)
-		// 	{
-		// 		ILI9341_DrawFilledRectangle(77, i - 2 * 22, 77 + (20 * 2), 124 - (22 * 2), 0x769f);
-		// 		ILI9341_putBitmap(77, i, 20, 22, 2, sprite_dino_stand, 20 * 22);
-		// 	}
-		// }
+		// elements_manager_update_full_screen();
+
+		if (!readButton())
+		{
+			for (int i = 124; i > 80; i -= 2)
+			{
+				elements_manager_move_element(ID_DINO, 82, i);
+			}
+			for (int i = 80; i < 124; i += 2)
+			{
+				elements_manager_move_element(ID_DINO, 82, i);
+			}
+		}
+	}
+}
+int a = 0;
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if (GPIO_Pin == BLUE_BUTTON_PIN)
+	{
+		a++;
+	}
+	else
+	{
+		__NOP();
 	}
 }
