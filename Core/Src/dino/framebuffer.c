@@ -1,5 +1,6 @@
 #include "dino/framebuffer.h"
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
+#include "dino/elements_manager.h"
 
 void fb_send_full_screen()
 {
@@ -17,9 +18,8 @@ void fb_draw_filled_rectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1
     // }
 }
 
-void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width, int16_t height, const uint16_t *img, uint8_t scale)
+void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width, int16_t height, const uint16_t *img, uint8_t scale, uint16_t fb_width)
 {
-    uint32_t fb_index = 0;
     for (int32_t y = 0; y < height; y++)
     {
         for (int32_t k = 0; k < scale; k++)
@@ -30,14 +30,12 @@ void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width
                 {
                     if (img[y * width + x] == 0)
                     {
-                    	fb_index++;
                         continue;
                     }
-                    framebuffer[fb_index++] = img[y * width + x];
+
+                    framebuffer[(y0 + y * scale + k) * fb_width + x0 + x * scale + j] = img[y * width + x];
                 }
             }
         }
     }
-
-    fb_index++;
 }

@@ -25,10 +25,10 @@ int dino_main(void)
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
 	// Attention, les pins PA2 et PA3 ne sont pas reli�es jusqu'au connecteur de la Nucleo.
 	// Ces broches sont redirig�es vers la sonde de d�bogage, la liaison UART �tant ensuite encapsul�e sur l'USB vers le PC de d�veloppement.
-	//	UART_init(UART2_ID, 115200);
+//		UART_init(UART2_ID, 115200);
 
 	//"Indique que les printf sortent vers le p�riph�rique UART2."
-	//	SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
+//		SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
 
 	// Initialisation du port de la led Verte (carte Nucleo)
 	BSP_GPIO_PinCfg(LED_GREEN_GPIO, LED_GREEN_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
@@ -44,8 +44,17 @@ int dino_main(void)
 	elements_manager_update_full_screen();
 	fb_send_full_screen();
 
+	uint16_t x = 0;
+	uint16_t y = 134;
 	while (1)
 	{
+
+		for (int i = 0; i < 320; i++)
+		{
+			elements_manager_move_element(ID_CACTUS_1, i, y);
+		}
+		elements_manager_update_full_screen();
+
 		// if (!readButton())
 		// {
 		// 	for (int i = 124; i > 100; i--)
