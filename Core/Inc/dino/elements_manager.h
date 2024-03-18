@@ -67,7 +67,7 @@ typedef struct
         move_manager_status_t status;
         int16_t target_x;
         int16_t target_y;
-        int16_t speed;
+        float speed;
     }move;
 
 } element_t;

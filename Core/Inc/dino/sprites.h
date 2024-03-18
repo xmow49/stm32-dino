@@ -8,5 +8,6 @@ extern const uint16_t sprite_dino_sit[];
 extern const uint16_t sprite_cactus[];
 extern const uint16_t sprite_copyright[];
 extern const uint16_t sprite_gameover[];
+extern const uint16_t sprite_cloud[];
 
 #endif // SPRITES_H

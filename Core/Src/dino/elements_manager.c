@@ -12,13 +12,16 @@
 
 // clang-format off
 element_t elements_list[] = {
-    {TYPE_SPRITE,   ID_DINO,        82,  124,    20, 22,  .data.sprite = {2, sprite_dino_stand}, MOVE_NO},
-//    {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus}, MOVE_NO},
-    {TYPE_SPRITE,   ID_CACTUS_1,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus}, MOVE_NO},
-    // {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,  9,  .data.sprite = {3, sprite_gameover}, MOVE_NO},
-//    {TYPE_BITMAP,   ID_COPYRIGHT,   31,  175,   129,  26,  .data.sprite = {2, sprite_copyright}, MOVE_NO},
-    {TYPE_FILL,     ID_SKY,         0,  0,     320, 168,   .data.fill = {COLOR_SKY_LIGHT},      MOVE_NO},
-    {TYPE_FILL,     ID_GROUND,      0,  169,   320, 72,    .data.fill = {COLOR_GROUND_LIGHT},   MOVE_NO},
+    {TYPE_SPRITE,   ID_DINO,        82,  124,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }},
+//  {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+    // {TYPE_SPRITE,   ID_CACTUS_0,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+    {TYPE_SPRITE,   ID_CACTUS_1,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+//  {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }},
+//  {TYPE_BITMAP,   ID_COPYRIGHT,   31,  175,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }},
+    {TYPE_SPRITE,   ID_CLOUD_0,     57,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
+    {TYPE_SPRITE,   ID_CLOUD_1,    227,  66,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
+    {TYPE_FILL,     ID_SKY,          0,   0,   320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }},
+    {TYPE_FILL,     ID_GROUND,       0, 169,   320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }},
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
@@ -44,8 +47,8 @@ int elements_manager_update_full_screen()
             break;
         case TYPE_BITMAP:
             fb_generate_background(framebuffer, element->x, element->y + 1, element->width, element->height);
-            //            fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.scale, 1, element->width);
-            ILI9341_putBitmap(element->x, element->y, element->width, element->height, element->data.sprite.sprite, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
+            fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.scale, 1, element->width);
+            ILI9341_putBitmap(element->x, element->y, element->width, element->height, element->data.sprite.sprite, framebuffer, element->width * element->height);
             break;
             break;
         }

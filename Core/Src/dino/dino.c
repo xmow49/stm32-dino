@@ -48,31 +48,22 @@ int dino_main(void)
 
 	// elements_manager_move_element(ID_CACTUS_1, 310, 140);
 
+	uint32_t last_time = HAL_GetTick();
+	uint32_t fps = 0;
+	uint32_t frame_time = 0;
 	while (1)
 	{
 
+		last_time = HAL_GetTick();
 		move_manager_loop();
-
-		// for (int i = 320; i > 0; i--)
-		// {
-		// 	elements_manager_move_element(ID_CACTUS_1, i, 140);
-		// }
-		// //
-		// //		elements_manager_move_element(ID_DINO, 82, 124);
-
-		// // elements_manager_update_full_screen();
-
-		// if (!readButton())
-		// {
-		// 	for (int i = 124; i > 80; i -= 2)
-		// 	{
-		// 		elements_manager_move_element(ID_DINO, 82, i);
-		// 	}
-		// 	for (int i = 80; i < 124; i += 2)
-		// 	{
-		// 		elements_manager_move_element(ID_DINO, 82, i);
-		// 	}
-		// }
+		frame_time = HAL_GetTick() - last_time;
+		fps = 1000 / (frame_time == 0 ? 1 : frame_time);
+		printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
+		// cap 60 fps
+		if (fps > 60)
+		{
+			HAL_Delay(1000 / 60 - frame_time);
+		}
 	}
 }
 int a = 0;
@@ -80,8 +71,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == BLUE_BUTTON_PIN)
 	{
-		a++;
-		move_manager_move_element(ID_DINO, 82, 80, 2);
+		if (elements_manager_find_element(ID_DINO)->move.status == MOVE_NO)
+		{
+			move_manager_move_element(ID_DINO, 82, 60, 3);
+		}
 	}
 	else
 	{
