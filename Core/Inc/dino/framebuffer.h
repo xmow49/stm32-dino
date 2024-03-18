@@ -11,4 +11,6 @@ void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width
 
 void fb_generate_background(uint16_t *framebuffer, uint16_t framebuffer_x_offset, uint16_t framebuffer_y_offset, uint16_t width, uint16_t height);
 
+void fb_shrink_bitmap(uint16_t *framebuffer, int16_t *fb_width, int16_t *fb_height, int16_t x_offset, int16_t y_offset);
+
 #endif // FRAMEBUFFER_H

@@ -39,3 +39,31 @@ void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width
         }
     }
 }
+
+void fb_shrink_bitmap(uint16_t *framebuffer, int16_t *fb_width, int16_t *fb_height, int16_t x_offset, int16_t y_offset)
+{
+    // Vérifie si le décalage est négatif
+    if (x_offset < 0)
+    {
+        // Calcule la nouvelle largeur du framebuffer
+        int16_t new_fb_width = *fb_width + x_offset;
+
+        // Si la nouvelle largeur est négative, ajuste-la à 0
+        if (new_fb_width < 0)
+        {
+            new_fb_width = 0;
+        }
+
+        // Décale les pixels du framebuffer vers la gauche
+        for (int32_t y = 0; y < *fb_height; y++)
+        {
+            for (int32_t x = 0; x < new_fb_width; x++)
+            {
+                framebuffer[y * (*fb_width) + x] = framebuffer[y * (*fb_width) + x - x_offset];
+            }
+        }
+
+        // Met à jour la largeur du framebuffer
+        *fb_width = new_fb_width;
+    }
+}

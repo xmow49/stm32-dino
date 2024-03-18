@@ -46,7 +46,7 @@ int dino_main(void)
 
 	move_manager_init();
 
-	// elements_manager_move_element(ID_CACTUS_1, 310, 140);
+	// elements_manager_move_element(ID_CLOUD_0, -20, 140);
 
 	uint32_t last_time = HAL_GetTick();
 	uint32_t fps = 0;
@@ -58,7 +58,7 @@ int dino_main(void)
 		move_manager_loop();
 		frame_time = HAL_GetTick() - last_time;
 		fps = 1000 / (frame_time == 0 ? 1 : frame_time);
-		printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
+		// printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
 		// cap 60 fps
 		if (fps > 60)
 		{

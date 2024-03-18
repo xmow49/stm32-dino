@@ -110,27 +110,45 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         return -1;
     }
 
-    if (target_x < 0 || target_y < 0)
+    int width = element->width;
+    int height = element->height;
+    uint16_t scale = element->data.sprite.scale;
+    int x_offset = 0;
+    int y_offset = 0;
+
+    if (target_x < 0)
     {
-        return -1;
+        x_offset = abs(target_x);
+        // width = width * scale + target_x;
+        printf("x_offset: %d, width: %d\n\r", x_offset, width);
+    }
+    if (target_y < 0)
+    {
+        y_offset = abs(target_y);
+        // height = height + target_y;
+        printf("y_offset: %d, height: %d\n\r", y_offset, height);
     }
 
-    if (target_x + element->width * element->data.sprite.scale >= SCREEN_WIDTH)
+    if (target_x + width * scale >= SCREEN_WIDTH)
     {
-        return -1;
+        x_offset = target_x + width * scale - SCREEN_WIDTH;
+        // width = SCREEN_WIDTH - target_x;
+        printf("x_offset: %d, width: %d\n\r", x_offset, width);
     }
 
-    if (target_y + element->height * element->data.sprite.scale >= SCREEN_HEIGHT)
+    if (target_y + height * scale >= SCREEN_HEIGHT)
     {
-        return -1;
+        y_offset = target_y + height * scale - SCREEN_HEIGHT;
+        // height = SCREEN_HEIGHT - target_y;
+        printf("y_offset: %d, height: %d\n\r", y_offset, height);
     }
 
     // check if the new values are overlap the last position
 
-    if (abs(element->x - target_x) < element->width * element->data.sprite.scale && abs(element->y - target_y) < element->height * element->data.sprite.scale)
+    if (abs(element->x - target_x) < width * scale && abs(element->y - target_y) < height * scale)
     {
-        uint16_t fb_width = element->width * element->data.sprite.scale + abs(element->x - target_x);
-        uint16_t fb_height = element->height * element->data.sprite.scale + abs(element->y - target_y);
+        uint16_t fb_width = width * scale + abs(element->x - target_x);
+        uint16_t fb_height = height * scale + abs(element->y - target_y);
 
         uint16_t bitmap_x = 0;
         uint16_t bitmap_y = 0;
@@ -138,7 +156,7 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         fb_generate_background(framebuffer, element->x, element->y + 1, fb_width, fb_height);
         if ((int32_t)element->x - (int32_t)target_x < 0)
         {
-            bitmap_x = fb_width - (element->width * element->data.sprite.scale);
+            bitmap_x = fb_width - (width * scale);
         }
         else
         {
@@ -147,28 +165,29 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
 
         if ((int32_t)element->y - (int32_t)target_y < 0)
         {
-            bitmap_y = fb_height - (element->height * element->data.sprite.scale);
+            bitmap_y = fb_height - (height * scale);
         }
         else
         {
             bitmap_y = 0;
         }
-        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, fb_width);
+        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
         ILI9341_putBitmap(element->x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         element->x = target_x;
         element->y = target_y;
         return 0;
     }
 
-    fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
-    ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
+    fb_generate_background(framebuffer, element->x, element->y + 1, width * scale, height * scale);
+    ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
 
     element->x = target_x;
     element->y = target_y;
 
-    fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
-    fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
-    ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
+    fb_generate_background(framebuffer, element->x, element->y + 1, width * scale, height * scale);
+    fb_draw_bitmap(framebuffer, 0, 0, width, height, element->data.sprite.sprite, scale, width * scale);
+
+    ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
 
     return 0;
 }

@@ -41,10 +41,10 @@ typedef struct
 {
     type_t type;
     element_id_t id;
-    uint16_t x;
-    uint16_t y;
-    uint16_t width;
-    uint16_t height;
+    int x;
+    int y;
+    int width;
+    int height;
     union
     {
         struct
@@ -65,10 +65,10 @@ typedef struct
     struct
     {
         move_manager_status_t status;
-        int16_t target_x;
-        int16_t target_y;
-        float speed;
-    }move;
+        int target_x;
+        int target_y;
+        int speed;
+    } move;
 
 } element_t;
 

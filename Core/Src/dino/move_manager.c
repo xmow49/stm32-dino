@@ -4,6 +4,7 @@ int move_manager_init()
 {
     move_manager_move_element(ID_CACTUS_1, 20, 140, 1);
     move_manager_move_element(ID_CLOUD_0, 0, 43, 1);
+    move_manager_move_element(ID_CLOUD_1, 0, 43, 1);
 
     return 0;
 }
@@ -27,6 +28,11 @@ int move_manager_finish_cb(element_id_t element_id)
         elements_manager_move_element(ID_CACTUS_1, 290, 140);
         move_manager_move_element(ID_CACTUS_1, 20, 140, 2);
         break;
+    case ID_CLOUD_0:
+    case ID_CLOUD_1:
+        elements_manager_move_element(element_id, 280, 43);
+        move_manager_move_element(element_id, 0, 43, 10);
+        break;
     case ID_DINO:
     {
         static int jump = 0;
@@ -49,6 +55,8 @@ int move_manager_finish_cb(element_id_t element_id)
     return 0;
 }
 
+uint32_t frame_count=0;
+
 int move_manager_loop()
 {
     for (int i = 0; i < elements_count; i++)
@@ -56,8 +64,14 @@ int move_manager_loop()
         element_t *element = &elements_list[i];
         if (element->move.status == MOVE_IN_PROGRESS)
         {
-            uint16_t new_x = element->x;
+            if(!(frame_count %  element->move.speed)){
+            	continue;
+            }
+
+        	uint16_t new_x = element->x;
             uint16_t new_y = element->y;
+
+
             if (element->x < element->move.target_x)
             {
                 new_x += abs(new_x - element->move.target_x) > element->move.speed ? element->move.speed : abs(new_x - element->move.target_x);
@@ -83,6 +97,6 @@ int move_manager_loop()
             elements_manager_move_element(element->id, new_x, new_y);
         }
     }
-
+    frame_count++;
     return 0;
 }
