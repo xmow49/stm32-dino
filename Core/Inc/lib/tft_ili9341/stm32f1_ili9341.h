@@ -305,7 +305,7 @@ ILI931_Options_t ILI9341_getOptions(void);
 void ILI9341_printf(int16_t x, int16_t y, FontDef_t *font, int16_t foreground, int16_t background, const char *format, ...)  __attribute__((format (printf, 6, 7)));
 
 void ILI9341_putImage(int16_t x0, int16_t y0, int16_t width, int16_t height, const int16_t *img, int32_t size);
-void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale,  const int16_t *img, int32_t size);
+void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale,  const uint16_t *img, int32_t size);
 
 void ILI9341_putImage_monochrome(uint16_t color_front, uint16_t color_background, int16_t x0, int16_t y0, int16_t width, int16_t height, const uint8_t *img, int32_t size);
 

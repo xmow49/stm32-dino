@@ -9,6 +9,7 @@
 #include "dino/sprites.h"
 #include "dino/framebuffer.h"
 #include "dino/elements_manager.h"
+#include "dino/move_manager.h"
 
 void writeLED(bool_e b)
 {
@@ -43,29 +44,35 @@ int dino_main(void)
 
 	elements_manager_update_full_screen();
 
+	move_manager_init();
+
+	// elements_manager_move_element(ID_CACTUS_1, 310, 140);
+
 	while (1)
 	{
 
-		for (int i = 320; i > 0; i--)
-		{
-			elements_manager_move_element(ID_CACTUS_1, i, 140);
-		}
-		//
-		//		elements_manager_move_element(ID_DINO, 82, 124);
+		move_manager_loop();
 
-		// elements_manager_update_full_screen();
+		// for (int i = 320; i > 0; i--)
+		// {
+		// 	elements_manager_move_element(ID_CACTUS_1, i, 140);
+		// }
+		// //
+		// //		elements_manager_move_element(ID_DINO, 82, 124);
 
-		if (!readButton())
-		{
-			for (int i = 124; i > 80; i -= 2)
-			{
-				elements_manager_move_element(ID_DINO, 82, i);
-			}
-			for (int i = 80; i < 124; i += 2)
-			{
-				elements_manager_move_element(ID_DINO, 82, i);
-			}
-		}
+		// // elements_manager_update_full_screen();
+
+		// if (!readButton())
+		// {
+		// 	for (int i = 124; i > 80; i -= 2)
+		// 	{
+		// 		elements_manager_move_element(ID_DINO, 82, i);
+		// 	}
+		// 	for (int i = 80; i < 124; i += 2)
+		// 	{
+		// 		elements_manager_move_element(ID_DINO, 82, i);
+		// 	}
+		// }
 	}
 }
 int a = 0;
@@ -74,6 +81,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if (GPIO_Pin == BLUE_BUTTON_PIN)
 	{
 		a++;
+		move_manager_move_element(ID_DINO, 82, 80, 2);
 	}
 	else
 	{

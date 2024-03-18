@@ -12,6 +12,7 @@
     "stdint.h": "c",
     "stdint-gcc.h": "c",
     "elements_manager.h": "c",
-    "framebuffer.h": "c"
+    "framebuffer.h": "c",
+    "move_manager.h": "c"
   }
 }

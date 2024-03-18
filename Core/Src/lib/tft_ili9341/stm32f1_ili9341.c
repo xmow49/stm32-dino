@@ -1122,7 +1122,7 @@ void ILI9341_putImage(int16_t x0, int16_t y0, int16_t width, int16_t height, con
 	TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_8b);
 }
 
-void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, const int16_t *img, int32_t size)
+void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, const uint16_t *img, int32_t size)
 {
 	x0++;
 	y0++;
@@ -1148,6 +1148,7 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 		{
 			for (int32_t x = 0; x < width; x++)
 			{
+
 				for (int32_t j = 0; j < scale; j++)
 				{
 					datas[1] = HIGHINT(img[y * width + x]);
