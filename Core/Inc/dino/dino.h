@@ -20,7 +20,7 @@
 #define COLOR_GROUND_DARK 0x0000
 
 #define DINO_GRAVITY_SPEED 20
-#define CACTUS_SPEED 70
+#define CACTUS_SPEED 50
 
 int dino_main(); // dino main
 

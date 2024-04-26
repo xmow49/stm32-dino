@@ -57,6 +57,13 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
+		if (collision_check())
+		{
+			HAL_Delay(1000);
+			printf("Game Over\n\r");
+			continue;
+		}
+
 		last_time = HAL_GetTick();
 		move_manager_loop();
 		frame_time = HAL_GetTick() - last_time;
