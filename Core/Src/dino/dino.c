@@ -3,6 +3,7 @@
 #include "macro_types.h"
 #include "lib/stm/stm32f1_gpio.h"
 #include <stdint.h>
+#include <stdbool.h>
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 
 #include "dino/dino.h"
@@ -22,6 +23,8 @@ bool_e readButton(void)
 	return HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN);
 }
 
+volatile bool game_over = false;
+volatile bool want_restart = false;
 int dino_main(void)
 {
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -39,17 +42,9 @@ int dino_main(void)
 	BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH);
 
 	ILI9341_Init();
-	// ILI9341_Fill(0x769f);
-	// ILI9341_DrawFilledRectangle(0, 168, 320, 240, 0xf6b2);
-	// ILI9341_putBitmap(77, 124, 20, 22, 2, sprite_dino_stand, 20 * 22);
-
 	elements_manager_update_full_screen();
-
 	move_manager_init();
-
 	score_init();
-
-	// elements_manager_move_element(ID_CLOUD_0, -20, 140);
 
 	uint32_t last_time = HAL_GetTick();
 	uint32_t fps = 0;
@@ -57,44 +52,80 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
-		if (collision_check())
+		if (want_restart)
 		{
+			printf("reinit\n\r");
+			move_manager_stop_element(ID_CACTUS_1);
+			move_manager_stop_element(ID_DINO);
+			elements_manager_set_visible(ID_GAME_OVER, false);
+			score_save();
+			elements_manager_move_element(ID_CACTUS_1, C_X, C_Y);
+			elements_manager_move_element(ID_DINO, D_X, D_Y);
+			elements_manager_update_full_screen();
+			score_reset();
 			HAL_Delay(1000);
-			printf("Game Over\n\r");
-			continue;
+			move_manager_init();
+
+			__disable_irq();
+			game_over = false;
+			want_restart = false;
+			__enable_irq();
 		}
 
-		last_time = HAL_GetTick();
-		move_manager_loop();
-		frame_time = HAL_GetTick() - last_time;
-		fps = 1000 / (frame_time == 0 ? 1 : frame_time);
-		// cap 60 fps
-		if (fps > 60)
+		if (!game_over)
 		{
-			HAL_Delay(1000 / 60 - frame_time);
+			last_time = HAL_GetTick();
+			move_manager_loop();
+			frame_time = HAL_GetTick() - last_time;
+			fps = 1000 / (frame_time == 0 ? 1 : frame_time);
+			// cap 30 fps
+			if (fps > 30)
+			{
+				HAL_Delay(1000 / 30 - frame_time);
+			}
+			count++;
+			if (count % 100 == 0)
+			{
+				printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
+				count = 0;
+			}
+			score_update();
+
+			if (collision_check())
+			{
+				__disable_irq();
+				game_over = true;
+				__enable_irq();
+				printf("Game Over\n\r");
+				score_save();
+				elements_manager_set_visible(ID_GAME_OVER, true);
+			}
 		}
-		count++;
-		if (count % 100 == 0)
-		{
-			printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
-			count = 0;
-		}
-		score_update();
 	}
 }
-int a = 0;
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if (GPIO_Pin == BLUE_BUTTON_PIN)
+	static uint32_t start_time = 0;
+	if (!readButton())
 	{
-		if (elements_manager_find_element(ID_DINO)->move.status == MOVE_NO)
+		start_time = HAL_GetTick();
+		if (game_over)
 		{
-			printf("Saut\n\r");
-			move_manager_move_element(ID_DINO, 82, 60, DINO_GRAVITY_SPEED);
+			want_restart = true;
+		}
+		else
+		{
+			if (elements_manager_find_element(ID_DINO)->move.status == MOVE_NO)
+			{
+				dino_process_jump();
+			}
 		}
 	}
 	else
 	{
-		__NOP();
+		if (HAL_GetTick() - start_time > 3000)
+		{
+			score_erase();
+		}
 	}
 }

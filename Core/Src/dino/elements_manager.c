@@ -8,54 +8,68 @@
 #include "dino/move_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 
 // clang-format off
 element_t elements_list[] = {
-    {TYPE_SPRITE,   ID_DINO,        82,  124,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }},
+    {TYPE_SPRITE,   ID_DINO,       D_X,  D_Y,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
 
-//  {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
-//  {TYPE_SPRITE,   ID_CACTUS_0,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+    {TYPE_SPRITE,   ID_CACTUS_1,   C_X,  C_Y,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_CACTUS_1,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+    {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
+    {TYPE_BITMAP,   ID_COPYRIGHT,   31,  178,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
 
-//  {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }},
-//  {TYPE_BITMAP,   ID_COPYRIGHT,   31,  175,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }},
-
-    {TYPE_SPRITE,   ID_CLOUD_0,     57,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
-    {TYPE_SPRITE,   ID_CLOUD_1,    227,  66,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
-    {TYPE_FILL,     ID_SKY,          0,   0,   320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }},
-    {TYPE_FILL,     ID_GROUND,       0, 169,   320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }},
+    // {TYPE_SPRITE,   ID_CLOUD_0,     57,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CLOUD_1,    227,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_FILL,     ID_SKY,          0,   0,   320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }, true},
+    {TYPE_FILL,     ID_GROUND,       0, 169,   320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }, true},
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
 
 // clang-format on
 
-uint16_t framebuffer[32 * 176];
+uint16_t framebuffer[34 * 176]; // 5632
 
 int elements_manager_update_full_screen()
 {
     for (int i = elements_count - 1; i >= 0; i--)
     {
         const element_t *element = &elements_list[i];
-        switch (element->type)
-        {
-        case TYPE_FILL:
-            ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
-            break;
-        case TYPE_SPRITE:
-            fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
-            fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
-            ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
-            break;
-        case TYPE_BITMAP:
-            fb_generate_background(framebuffer, element->x, element->y + 1, element->width, element->height);
-            fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.scale, 1, element->width);
-            ILI9341_putBitmap(element->x, element->y, element->width, element->height, element->data.sprite.sprite, framebuffer, element->width * element->height);
-            break;
-            break;
-        }
+        elements_manager_update_element(element->id);
+    }
+    return 0;
+}
+
+int elements_manager_update_element(element_id_t id)
+{
+    const element_t *element = elements_manager_find_element(id);
+    if (!element)
+    {
+        return -1;
+    }
+    if (!element->visible)
+    {
+        return 0;
+    }
+
+    switch (element->type)
+    {
+    case TYPE_FILL:
+        ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
+        break;
+    case TYPE_SPRITE:
+        fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
+        fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
+        ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
+        break;
+    case TYPE_BITMAP:
+        fb_generate_background(framebuffer, element->x, element->y + 1, 2, 2);
+        uint16_t background_color = framebuffer[0];
+        ILI9341_putBitmap_with_bg(element->x, element->y, element->width, element->height, element->data.sprite.scale,background_color, element->data.sprite.sprite, element->width * element->height);
+        break;
+        break;
     }
     return 0;
 }
@@ -192,6 +206,19 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     fb_draw_bitmap(framebuffer, 0, 0, width, height, element->data.sprite.sprite, scale, width * scale);
 
     ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
+
+    return 0;
+}
+
+int elements_manager_set_visible(element_id_t id, bool visible)
+{
+    element_t *element = elements_manager_find_element(id);
+    if (!element)
+    {
+        return -1;
+    }
+    element->visible = visible;
+    elements_manager_update_element(id);
 
     return 0;
 }

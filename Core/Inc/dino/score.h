@@ -14,4 +14,8 @@ void score_update();
 
 void score_reset();
 
+void score_save();
+
+void score_erase();
+
 #endif /* INC_DINO_SCORE_H_ */

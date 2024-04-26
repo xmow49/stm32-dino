@@ -1181,6 +1181,56 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 	TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_8b);
 }
 
+
+void ILI9341_putBitmap_with_bg(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, uint16_t bg, const uint16_t *img, int32_t size)
+{
+	x0++;
+	y0++;
+	ILI9341_SetCursorPosition(x0, y0, x0 + (width * scale) - 1, y0 + (height * scale) - 1);
+
+	uint8_t datas[2];
+
+	/* Set command for GRAM data */
+	ILI9341_SendCommand(ILI9341_GRAM);
+
+	/* Send everything */
+	ILI9341_CS_RESET();
+	ILI9341_WRX_SET();
+
+	/* Go to 16-bit SPI mode */
+	TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_16b);
+
+#ifndef LCD_DMA
+
+	for (int32_t y = 0; y < height; y++)
+	{
+		for (int32_t k = 0; k < scale; k++)
+		{
+			for (int32_t x = 0; x < width; x++)
+			{
+				for (int32_t j = 0; j < scale; j++)
+				{
+					if(img[y * width + x] == 0){
+						datas[1] = HIGHINT(bg);
+						datas[0] = LOWINT(bg);
+					}else{
+						datas[1] = HIGHINT(img[y * width + x]);
+						datas[0] = LOWINT(img[y * width + x]);
+					}
+
+					SPI_WriteMultiNoRegister(ILI9341_SPI, datas, 1);
+				}
+			}
+		}
+	}
+
+#else
+	SPI2_DMA_send16BitArray((Uint16 *)img, size);
+#endif
+
+	TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_8b);
+}
+
 #ifndef LCD_DMA
 // size : nombre de pixel (1 pixel = 1 bit !)
 // img : tableau contenant une image en monochrome, 1 octet = 8 pixels ! (bit de poids fort = premier pixel)

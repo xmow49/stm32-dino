@@ -309,6 +309,9 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 
 void ILI9341_putImage_monochrome(uint16_t color_front, uint16_t color_background, int16_t x0, int16_t y0, int16_t width, int16_t height, const uint8_t *img, int32_t size);
 
+void ILI9341_putBitmap_with_bg(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, uint16_t bg, const uint16_t *img, int32_t size);
+
+
 /**
  * @}
  */

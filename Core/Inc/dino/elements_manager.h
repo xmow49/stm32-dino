@@ -2,6 +2,7 @@
 #define ELEMENTS_MANAGER_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum
 {
@@ -77,7 +78,7 @@ typedef struct
         int px_per_frame;
         speed_unit_t speed_unit;
     } move;
-
+    bool visible;
 } element_t;
 
 extern const uint16_t elements_count;
@@ -91,5 +92,8 @@ int elements_manager_update_full_screen();
 int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t target_y);
 
 element_t *elements_manager_find_element(element_id_t id);
+
+int elements_manager_update_element(element_id_t id);
+int elements_manager_set_visible(element_id_t id, bool visible);
 
 #endif // ELEMENTS_MANAGER_H
