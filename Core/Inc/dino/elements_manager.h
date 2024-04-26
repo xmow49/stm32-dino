@@ -33,6 +33,12 @@ typedef enum
 
 typedef enum
 {
+    SPEED_N_FRAME,
+    SPEED_DELTA_FRAME,
+} speed_unit_t;
+
+typedef enum
+{
     MOVE_NO,
     MOVE_IN_PROGRESS,
 } move_manager_status_t;
@@ -68,6 +74,8 @@ typedef struct
         int target_x;
         int target_y;
         int speed;
+        int px_per_frame;
+        speed_unit_t speed_unit;
     } move;
 
 } element_t;

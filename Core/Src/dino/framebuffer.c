@@ -62,7 +62,6 @@ void fb_shrink_bitmap(uint16_t *framebuffer, int16_t *fb_width, int16_t *fb_heig
                 framebuffer[y * (*fb_width) + x] = framebuffer[y * (*fb_width) + x - x_offset];
             }
         }
-
         // Met à jour la largeur du framebuffer
         *fb_width = new_fb_width;
     }

@@ -13,11 +13,15 @@
 // clang-format off
 element_t elements_list[] = {
     {TYPE_SPRITE,   ID_DINO,        82,  124,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }},
+
 //  {TYPE_SPRITE,   ID_CACTUS_0,   151,  132,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
-    // {TYPE_SPRITE,   ID_CACTUS_0,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+//  {TYPE_SPRITE,   ID_CACTUS_0,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+
     {TYPE_SPRITE,   ID_CACTUS_1,   200,  140,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }},
+
 //  {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }},
 //  {TYPE_BITMAP,   ID_COPYRIGHT,   31,  175,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }},
+
     {TYPE_SPRITE,   ID_CLOUD_0,     57,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
     {TYPE_SPRITE,   ID_CLOUD_1,    227,  66,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }},
     {TYPE_FILL,     ID_SKY,          0,   0,   320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }},
@@ -120,27 +124,27 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     {
         x_offset = abs(target_x);
         // width = width * scale + target_x;
-        printf("x_offset: %d, width: %d\n\r", x_offset, width);
+        // printf("x_offset: %d, width: %d\n\r", x_offset, width);
     }
     if (target_y < 0)
     {
         y_offset = abs(target_y);
         // height = height + target_y;
-        printf("y_offset: %d, height: %d\n\r", y_offset, height);
+        // printf("y_offset: %d, height: %d\n\r", y_offset, height);
     }
 
     if (target_x + width * scale >= SCREEN_WIDTH)
     {
         x_offset = target_x + width * scale - SCREEN_WIDTH;
         // width = SCREEN_WIDTH - target_x;
-        printf("x_offset: %d, width: %d\n\r", x_offset, width);
+        // printf("x_offset: %d, width: %d\n\r", x_offset, width);
     }
 
     if (target_y + height * scale >= SCREEN_HEIGHT)
     {
         y_offset = target_y + height * scale - SCREEN_HEIGHT;
         // height = SCREEN_HEIGHT - target_y;
-        printf("y_offset: %d, height: %d\n\r", y_offset, height);
+        // printf("y_offset: %d, height: %d\n\r", y_offset, height);
     }
 
     // check if the new values are overlap the last position

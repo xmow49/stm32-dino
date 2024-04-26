@@ -13,6 +13,7 @@
     "stdint-gcc.h": "c",
     "elements_manager.h": "c",
     "framebuffer.h": "c",
-    "move_manager.h": "c"
+    "move_manager.h": "c",
+    "stm32f1_fonts.h": "c"
   }
 }

@@ -10,6 +10,7 @@
 #include "dino/framebuffer.h"
 #include "dino/elements_manager.h"
 #include "dino/move_manager.h"
+#include "dino/score.h"
 
 void writeLED(bool_e b)
 {
@@ -46,24 +47,32 @@ int dino_main(void)
 
 	move_manager_init();
 
+	score_init();
+
 	// elements_manager_move_element(ID_CLOUD_0, -20, 140);
 
 	uint32_t last_time = HAL_GetTick();
 	uint32_t fps = 0;
 	uint32_t frame_time = 0;
+	uint32_t count = 0;
 	while (1)
 	{
-
 		last_time = HAL_GetTick();
 		move_manager_loop();
 		frame_time = HAL_GetTick() - last_time;
 		fps = 1000 / (frame_time == 0 ? 1 : frame_time);
-		// printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
 		// cap 60 fps
 		if (fps > 60)
 		{
 			HAL_Delay(1000 / 60 - frame_time);
 		}
+		count++;
+		if (count % 100 == 0)
+		{
+			printf("Time: %ld, fps: %ld\n\r", frame_time, fps);
+			count = 0;
+		}
+		score_update();
 	}
 }
 int a = 0;
@@ -73,7 +82,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 		if (elements_manager_find_element(ID_DINO)->move.status == MOVE_NO)
 		{
-			move_manager_move_element(ID_DINO, 82, 60, 3);
+			printf("Saut\n\r");
+			move_manager_move_element(ID_DINO, 82, 60, DINO_GRAVITY_SPEED);
 		}
 	}
 	else
