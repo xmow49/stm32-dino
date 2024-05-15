@@ -52,6 +52,7 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
+
 		if (want_restart)
 		{
 			printf("reinit\n\r");
