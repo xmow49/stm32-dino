@@ -54,6 +54,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+void init_pin(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin, uint32_t GPIO_Mode, uint32_t GPIO_Pull, uint32_t GPIO_Speed);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -66,6 +68,8 @@ int _write(int file, char *ptr, int len)
   HAL_UART_Transmit(&huart2, (uint8_t *)ptr, len, HAL_MAX_DELAY);
   return len;
 }
+
+
 
 /* USER CODE END 0 */
 
@@ -96,7 +100,9 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+
   MX_GPIO_Init();
+
   MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
@@ -122,78 +128,74 @@ int main(void)
  */
 void SystemClock_Config(void)
 {
-//  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-//  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-//
-//  /** Initializes the RCC Oscillators according to the specified parameters
-//   * in the RCC_OscInitTypeDef structure.
-//   */
-//  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-//  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
-//  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-//  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-//  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-//  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-//  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-//  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
-//
-//  /** Initializes the CPU, AHB and APB buses clocks
-//   */
-//  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-//  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-//  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-//  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-//  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-//
-//  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-//  {
-//    Error_Handler();
-//  }
+  //  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  //  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  //
+  //  /** Initializes the RCC Oscillators according to the specified parameters
+  //   * in the RCC_OscInitTypeDef structure.
+  //   */
+  //  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  //  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  //  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  //  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  //  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  //  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  //  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+  //  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  //  {
+  //    Error_Handler();
+  //  }
+  //
+  //  /** Initializes the CPU, AHB and APB buses clocks
+  //   */
+  //  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  //  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  //  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  //  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  //  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  //
+  //  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  //  {
+  //    Error_Handler();
+  //  }
 
+  //	code samuel
 
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-//	code samuel
+  /** Initializes the CPU, AHB and APB busses clocks
+   */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL16;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Initializes the CPU, AHB and APB busses clocks
+   */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-
-	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-		 RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-		 RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-
-		 /** Initializes the CPU, AHB and APB busses clocks
-		 */
-		 RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-		 RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-		 RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-		 RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-		 RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-		 RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-		 RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;
-		 if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-		 {
-		   Error_Handler();
-		 }
-		 /** Initializes the CPU, AHB and APB busses clocks
-		 */
-		 RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-		                             |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-		 RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-		 RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-		 RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-		 RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-		 if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-		 {
-		   Error_Handler();
-		 }
-//		 PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
-//		 PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
-//		 if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-//		 {
-//		   Error_Handler();
-//		 }
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  //		 PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  //		 PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+  //		 if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  //		 {
+  //		   Error_Handler();
+  //		 }
 }
 
 /**
@@ -265,6 +267,16 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE END USART2_Init 2 */
 }
 
+void init_pin(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin, uint32_t GPIO_Mode, uint32_t GPIO_Pull, uint32_t GPIO_Speed)
+{
+  GPIO_InitTypeDef GPIO_InitStructure; // Structure contenant les arguments de la fonction GPIO_Init
+  GPIO_InitStructure.Pin = GPIO_Pin;
+  GPIO_InitStructure.Mode = GPIO_Mode;
+  GPIO_InitStructure.Pull = GPIO_Pull;
+  GPIO_InitStructure.Speed = GPIO_Speed;
+  HAL_GPIO_Init(GPIOx, &GPIO_InitStructure);
+}
+
 /**
  * @brief GPIO Initialization Function
  * @param None
@@ -288,8 +300,43 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /* EXTI interrupt init*/
+  GPIO_InitStruct.Pin = BUTTON_UP_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_UP_PORT, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = BUTTON_UP_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_UP_PORT, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = BUTTON_DOWN_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_DOWN_PORT, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = BUTTON_LEFT_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_LEFT_PORT, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = BUTTON_RIGHT_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BUTTON_RIGHT_PORT, &GPIO_InitStruct);
+
+    /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */

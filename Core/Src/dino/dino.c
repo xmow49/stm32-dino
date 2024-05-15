@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 
+
+#include "main.h"
 #include "dino/dino.h"
 #include "dino/sprites.h"
 #include "dino/framebuffer.h"
@@ -20,7 +22,7 @@ void writeLED(bool_e b)
 
 bool_e readButton(void)
 {
-	return HAL_GPIO_ReadPin(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN);
+	return HAL_GPIO_ReadPin(BUTTON_UP_PORT, BUTTON_UP_PIN);
 }
 
 volatile bool game_over = false;
@@ -42,6 +44,7 @@ int dino_main(void)
 	BSP_GPIO_PinCfg(BLUE_BUTTON_GPIO, BLUE_BUTTON_PIN, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_FREQ_HIGH);
 
 	ILI9341_Init();
+	ILI9341_Rotate(ILI9341_Orientation_Landscape_2);
 	elements_manager_update_full_screen();
 	move_manager_init();
 	score_init();
