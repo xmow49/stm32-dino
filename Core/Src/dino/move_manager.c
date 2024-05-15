@@ -16,7 +16,7 @@ jump_status_t jump_status = JUMP_NO;
 
 int move_manager_init()
 {
-	jump_status = JUMP_NO;
+    jump_status = JUMP_NO;
     move_manager_move_element(ID_CACTUS_1, 20, 140, CACTUS_SPEED);
     move_manager_move_element(ID_CLOUD_0, 0, 43, CLOUD_SPEED);
     move_manager_move_element(ID_CLOUD_1, 0, 43, CLOUD_SPEED);
@@ -58,13 +58,15 @@ int move_manager_move_element(element_id_t element_id, int x, int y, int speed)
         }
         else
         {
-        	float fspeed ;
-        	 if (dx > dy){
-        		 fspeed = fabs(element->x - x) / (float)speed;
-        	 }else {
-        		 fspeed = fabs(element->y - y) / (float)speed;
-
-        	 }
+            float fspeed;
+            if (dx > dy)
+            {
+                fspeed = fabs(element->x - x) / (float)speed;
+            }
+            else
+            {
+                fspeed = fabs(element->y - y) / (float)speed;
+            }
 
             element->move.speed = (int)(1.0 / fspeed);
         }
@@ -115,59 +117,64 @@ int move_manager_loop()
     for (int i = 0; i < elements_count; i++)
     {
         element_t *element = &elements_list[i];
-        if (element->move.status == MOVE_IN_PROGRESS)
+        if (element->move.status != MOVE_IN_PROGRESS)
         {
-
-            if (element->x == element->move.target_x && element->y == element->move.target_y)
-            {
-                element->move.status = MOVE_NO;
-                move_manager_finish_cb(element->id);
-                continue;
-            }
-
-            switch (element->move.speed_unit)
-            {
-            case SPEED_DELTA_FRAME:
-                break;
-
-            case SPEED_N_FRAME:
-                if (frame_count % element->move.speed != 0)
-                {
-                    continue;
-                }
-                break;
-
-            default:
-                break;
-            }
-
-            uint16_t new_x = element->x;
-            uint16_t new_y = element->y;
-
-            if (element->x < element->move.target_x)
-            {
-                new_x += abs(new_x - element->move.target_x) > element->move.px_per_frame ? element->move.px_per_frame : abs(new_x - element->move.target_x);
-            }
-            else if (element->x > element->move.target_x)
-            {
-                new_x -= abs(new_x - element->move.target_x) > element->move.px_per_frame ? element->move.px_per_frame : abs(new_x - element->move.target_x);
-            }
-            if (element->y < element->move.target_y)
-            {
-                new_y += abs(new_y - element->move.target_y) > element->move.px_per_frame ? element->move.px_per_frame : abs(new_y - element->move.target_y);
-            }
-            else if (element->y > element->move.target_y)
-            {
-                new_y -= abs(new_y - element->move.target_y) > element->move.px_per_frame ? element->move.px_per_frame : abs(new_y - element->move.target_y);
-            }
-            if (element->x == element->move.target_x && element->y == element->move.target_y)
-            {
-                element->move.status = MOVE_NO;
-                move_manager_finish_cb(element->id);
-                continue;
-            }
-            elements_manager_move_element(element->id, new_x, new_y);
+            continue;
         }
+        if (element->x == element->move.target_x && element->y == element->move.target_y)
+        {
+            element->move.status = MOVE_NO;
+            elements_manager_move_element(element->id, element->move.target_x, element->move.target_y);
+            move_manager_finish_cb(element->id);
+            continue;
+        }
+
+        switch (element->move.speed_unit)
+        {
+        case SPEED_DELTA_FRAME:
+            break;
+
+        case SPEED_N_FRAME:
+            if (frame_count % element->move.speed != 0)
+            {
+                continue;
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        uint16_t new_x = element->x;
+        uint16_t new_y = element->y;
+
+        uint16_t dx = abs(element->x - element->move.target_x);
+        uint16_t dy = abs(element->y - element->move.target_y);
+        if (element->x < element->move.target_x)
+        {
+            new_x += dx > element->move.px_per_frame ? element->move.px_per_frame : dx;
+        }
+        else if (element->x > element->move.target_x)
+        {
+            new_x -= dx > element->move.px_per_frame ? element->move.px_per_frame : dx;
+        }
+
+        if (element->y < element->move.target_y)
+        {
+            new_y += dy > element->move.px_per_frame ? element->move.px_per_frame : dy;
+        }
+        else if (element->y > element->move.target_y)
+        {
+            new_y -= dy > element->move.px_per_frame ? element->move.px_per_frame : dy;
+        }
+        if (element->x == element->move.target_x && element->y == element->move.target_y)
+        {
+            element->move.status = MOVE_NO;
+            elements_manager_move_element(element->id, element->move.target_x, element->move.target_y);
+            move_manager_finish_cb(element->id);
+            continue;
+        }
+        elements_manager_move_element(element->id, new_x, new_y);
     }
     frame_count++;
     return 0;

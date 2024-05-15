@@ -60,14 +60,14 @@ int elements_manager_update_element(element_id_t id)
         ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
         break;
     case TYPE_SPRITE:
-        fb_generate_background(framebuffer, element->x, element->y + 1, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
+        fb_generate_background(framebuffer, element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
         fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
         ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
         break;
     case TYPE_BITMAP:
-        fb_generate_background(framebuffer, element->x, element->y + 1, 2, 2);
+        fb_generate_background(framebuffer, element->x, element->y, 2, 2);
         uint16_t background_color = framebuffer[0];
-        ILI9341_putBitmap_with_bg(element->x, element->y, element->width, element->height, element->data.sprite.scale,background_color, element->data.sprite.sprite, element->width * element->height);
+        ILI9341_putBitmap_with_bg(element->x, element->y, element->width, element->height, element->data.sprite.scale, background_color, element->data.sprite.sprite, element->width * element->height);
         break;
         break;
     }
@@ -134,6 +134,8 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     int x_offset = 0;
     int y_offset = 0;
 
+//    ILI9341_DrawFilledRectangle(200, 100, 210, 130, 0xFF00);
+//    ILI9341_DrawFilledRectangle(124, 100, 134, 130, 0xFF00);
     if (target_x < 0)
     {
         x_offset = abs(target_x);
@@ -171,7 +173,7 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         uint16_t bitmap_x = 0;
         uint16_t bitmap_y = 0;
 
-        fb_generate_background(framebuffer, element->x, element->y + 1, fb_width, fb_height);
+        fb_generate_background(framebuffer, element->x, element->y, fb_width, fb_height);
         if ((int32_t)element->x - (int32_t)target_x < 0)
         {
             bitmap_x = fb_width - (width * scale);
@@ -190,19 +192,33 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
             bitmap_y = 0;
         }
         fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
-        ILI9341_putBitmap(element->x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
+
+        uint16_t print_x = target_x;
+        uint16_t print_y = target_y;
+        if (bitmap_x != 0)
+        {
+            print_x = target_x - bitmap_x;
+        }
+//        if (bitmap_y != 0)
+//        {
+//            print_y = target_y - bitmap_y;
+//        }
+
+        ILI9341_putBitmap(print_x, print_y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
+        // ILI9341_putBitmap(element->x + bitmap_x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         element->x = target_x;
         element->y = target_y;
+
         return 0;
     }
 
-    fb_generate_background(framebuffer, element->x, element->y + 1, width * scale, height * scale);
+    fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
     ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
 
     element->x = target_x;
     element->y = target_y;
 
-    fb_generate_background(framebuffer, element->x, element->y + 1, width * scale, height * scale);
+    fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
     fb_draw_bitmap(framebuffer, 0, 0, width, height, element->data.sprite.sprite, scale, width * scale);
 
     ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);

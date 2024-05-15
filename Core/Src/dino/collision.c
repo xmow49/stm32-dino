@@ -32,6 +32,8 @@ bool collision_check()
         (dino->y + (dino->height * dino->data.sprite.scale) > cactus->y) &&
         (dino->y < cactus->y + (cactus->height * cactus->data.sprite.scale)))
     {
+        cactus->move.status = MOVE_NO;
+        dino->move.status = MOVE_NO;
         return true;
     }
 

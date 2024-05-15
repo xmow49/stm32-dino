@@ -53,6 +53,15 @@ int dino_main(void)
 	uint32_t fps = 0;
 	uint32_t frame_time = 0;
 	uint32_t count = 0;
+
+//	while(1){
+//		elements_manager_move_element(ID_CACTUS_1, 20, 50);
+//		HAL_Delay(200);
+//		elements_manager_move_element(ID_CACTUS_1, 100, 50);
+//		HAL_Delay(200);
+//
+//	}
+
 	while (1)
 	{
 
