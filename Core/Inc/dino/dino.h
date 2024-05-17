@@ -32,6 +32,11 @@
 #define C_X_START 290
 #define C_Y_START 140
 
+#define CLOUD_X_START 320
+#define CLOUD_Y_START 43
+#define CLOUD_X_TARGET -60
+#define CLOUD_Y_TARGET 43
+
 #define CLOUD_SPEED 1000
 
 int dino_main(); // dino main

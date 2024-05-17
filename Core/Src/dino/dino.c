@@ -94,15 +94,15 @@ int dino_main(void)
 			}
 			score_update();
 
-			if (collision_check())
-			{
-				__disable_irq();
-				game_over = true;
-				__enable_irq();
-				printf("Game Over\n\r");
-				score_save();
-				elements_manager_set_visible(ID_GAME_OVER, true);
-			}
+			// if (collision_check())
+			// {
+			// 	__disable_irq();
+			// 	game_over = true;
+			// 	__enable_irq();
+			// 	printf("Game Over\n\r");
+			// 	score_save();
+			// 	elements_manager_set_visible(ID_GAME_OVER, true);
+			// }
 		}
 	}
 }

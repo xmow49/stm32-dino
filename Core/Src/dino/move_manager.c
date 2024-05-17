@@ -18,8 +18,12 @@ int move_manager_init()
 {
     jump_status = JUMP_NO;
     move_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
-    move_manager_move_element(ID_CLOUD_0, 0, 43, CLOUD_SPEED);
-    move_manager_move_element(ID_CLOUD_1, 0, 43, CLOUD_SPEED);
+
+    elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
+    move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
+
+    // elements_manager_move_element(ID_CLOUD_1, abs(CLOUD_X_START - CLOUD_X_TARGET) * 2, CLOUD_Y_START);
+    // move_manager_move_element(ID_CLOUD_1, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED / 2);
 
     return 0;
 }
@@ -94,8 +98,8 @@ int move_manager_finish_cb(element_id_t element_id)
         break;
     case ID_CLOUD_0:
     case ID_CLOUD_1:
-        elements_manager_move_element(element_id, 260, 43);
-        move_manager_move_element(element_id, 0, 43, CLOUD_SPEED);
+        elements_manager_move_element(element_id, CLOUD_X_START, CLOUD_Y_START);
+        move_manager_move_element(element_id, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
         break;
     case ID_DINO:
     {

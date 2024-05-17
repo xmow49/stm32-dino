@@ -1126,7 +1126,19 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 {
 	x0++;
 	y0++;
-	ILI9341_SetCursorPosition(x0, y0, x0 + (width * scale) - 1, y0 + (height * scale) - 1);
+
+	uint16_t _x0 = x0;
+	uint16_t _y0 = y0;
+	if (x0 < 0)
+	{
+		_x0 = 0;
+	}
+	if (y0 < 0)
+	{
+		_y0 = 0;
+	}
+
+	ILI9341_SetCursorPosition(_x0, _y0, x0 + (width * scale) - 1, y0 + (height * scale) - 1);
 
 	uint8_t datas[2];
 
@@ -1148,9 +1160,12 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 		{
 			for (int32_t x = 0; x < width; x++)
 			{
-
 				for (int32_t j = 0; j < scale; j++)
 				{
+					if (x0 + x >= ILI9341_HEIGHT || y0 + y >= ILI9341_WIDTH || x0 + x < 0 || y0 + y < 0)
+					{
+						continue;
+					}
 					datas[1] = HIGHINT(img[y * width + x]);
 					datas[0] = LOWINT(img[y * width + x]);
 					SPI_WriteMultiNoRegister(ILI9341_SPI, datas, 1);
@@ -1181,7 +1196,6 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 	TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_8b);
 }
 
-
 void ILI9341_putBitmap_with_bg(int16_t x0, int16_t y0, int16_t width, int16_t height, uint8_t scale, uint16_t bg, const uint16_t *img, int32_t size)
 {
 	x0++;
@@ -1210,10 +1224,13 @@ void ILI9341_putBitmap_with_bg(int16_t x0, int16_t y0, int16_t width, int16_t he
 			{
 				for (int32_t j = 0; j < scale; j++)
 				{
-					if(img[y * width + x] == 0){
+					if (img[y * width + x] == 0)
+					{
 						datas[1] = HIGHINT(bg);
 						datas[0] = LOWINT(bg);
-					}else{
+					}
+					else
+					{
 						datas[1] = HIGHINT(img[y * width + x]);
 						datas[0] = LOWINT(img[y * width + x]);
 					}

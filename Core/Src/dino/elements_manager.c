@@ -13,17 +13,17 @@
 
 // clang-format off
 element_t elements_list[] = {
-    {TYPE_SPRITE,   ID_DINO,       D_X,  D_Y,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_DINO,        D_X,        D_Y,      20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_CACTUS_1,   C_X_START,  C_Y_START,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CACTUS_1,    C_X_START,  C_Y_START, 9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
-    {TYPE_BITMAP,   ID_COPYRIGHT,   31,  178,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
-
-    // {TYPE_SPRITE,   ID_CLOUD_0,     57,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_CLOUD_1,    227,  43,    28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
-    {TYPE_FILL,     ID_SKY,          0,   0,   320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }, true},
-    {TYPE_FILL,     ID_GROUND,       0, 169,   320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_GAME_OVER,   48,         53,        73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
+    {TYPE_BITMAP,   ID_COPYRIGHT,   31,         178,       129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
+    
+    // {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,         CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CLOUD_0,     20,        CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_FILL,     ID_SKY,          0,         0,       320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }, true},
+    {TYPE_FILL,     ID_GROUND,      0,          169,      320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }, true},
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
@@ -54,21 +54,28 @@ int elements_manager_update_element(element_id_t id)
         return 0;
     }
 
+    int16_t fb_width = element->width * element->data.sprite.scale;
+    int16_t fb_height = element->height * element->data.sprite.scale;
+
     switch (element->type)
     {
     case TYPE_FILL:
         ILI9341_DrawFilledRectangle(element->x, element->y, element->x + element->width, element->y + element->height, element->data.fill.color);
         break;
+
     case TYPE_SPRITE:
-        fb_generate_background(framebuffer, element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale);
-        fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, element->width * element->data.sprite.scale);
-        ILI9341_putBitmap(element->x, element->y, element->width * element->data.sprite.scale, element->height * element->data.sprite.scale, 1, framebuffer, element->width * element->data.sprite.scale * element->height * element->data.sprite.scale);
+
+        fb_generate_background(framebuffer, element->x, element->y, fb_width, fb_height);
+        fb_draw_bitmap(framebuffer, 0, 0, element->width, element->height, element->data.sprite.sprite, element->data.sprite.scale, fb_width);
+        ILI9341_putBitmap(element->x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         break;
     case TYPE_BITMAP:
         fb_generate_background(framebuffer, element->x, element->y, 2, 2);
         uint16_t background_color = framebuffer[0];
         ILI9341_putBitmap_with_bg(element->x, element->y, element->width, element->height, element->data.sprite.scale, background_color, element->data.sprite.sprite, element->width * element->height);
         break;
+        break;
+    default:
         break;
     }
     return 0;
@@ -84,36 +91,6 @@ element_t *elements_manager_find_element(element_id_t id)
         }
     }
     return NULL;
-}
-
-void fb_generate_background(uint16_t *framebuffer, uint16_t framebuffer_x_offset, uint16_t framebuffer_y_offset, uint16_t width, uint16_t height)
-{
-    int32_t framebuffer_index = width * height - 1;
-    for (int j = elements_count - 1; j >= 0; j--)
-    {
-        const element_t *bg_element = &elements_list[j];
-        uint16_t bg_max_x = bg_element->x + bg_element->width;
-        uint16_t bg_max_y = bg_element->y + bg_element->height;
-        if (bg_element->type != TYPE_FILL)
-        {
-            continue;
-        }
-        for (int y = framebuffer_y_offset; y < framebuffer_y_offset + (height); y++)
-        {
-            for (int x = framebuffer_x_offset; x < framebuffer_x_offset + (width); x++)
-            {
-                // framebuffer[framebuffer_index] = bg_element->data.fill.color;
-                if (x >= bg_element->x && x <= bg_max_x && y >= bg_element->y && y <= bg_max_y)
-                {
-                    if (framebuffer_index >= 0)
-                    {
-                        framebuffer[framebuffer_index] = bg_element->data.fill.color;
-                        framebuffer_index--;
-                    }
-                }
-            }
-        }
-    }
 }
 
 int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t target_y)
