@@ -1126,7 +1126,6 @@ void ILI9341_putBitmap(int16_t x0, int16_t y0, int16_t width, int16_t height, ui
 {
 	x0++;
 	y0++;
-
 	uint16_t _x0 = x0;
 	uint16_t _y0 = y0;
 	if (x0 < 0)

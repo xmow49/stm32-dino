@@ -16,6 +16,15 @@ typedef enum
 {
     ID_SKY,
     ID_GROUND,
+    ID_CROWN,
+
+    ID_ROCK_0,
+    ID_ROCK_1,
+    ID_ROCK_2,
+
+    ID_HOLE_0,
+    ID_HOLE_1,
+    ID_HOLE_2,
 
     ID_CACTUS_0,
     ID_CACTUS_1,

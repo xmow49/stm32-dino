@@ -13,12 +13,20 @@
 
 // clang-format off
 element_t elements_list[] = {
+    {TYPE_SPRITE,   ID_CROWN,       220,          8,        18, 15,  .data.sprite = {1, sprite_crown},      { MOVE_NO }, true},
     {TYPE_SPRITE,   ID_DINO,        D_X,        D_Y,      20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
 
     {TYPE_SPRITE,   ID_CACTUS_1,    C_X_START,  C_Y_START, 9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
 
     {TYPE_SPRITE,   ID_GAME_OVER,   48,         53,        73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
     {TYPE_BITMAP,   ID_COPYRIGHT,   31,         178,       129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
+    
+    {TYPE_SPRITE,   ID_ROCK_0,      45,        165,        11,   3,  .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_ROCK_1,      212,       165,        11,   3,  .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_ROCK_2,      308,       165,        11,   3,  .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
+
+    {TYPE_SPRITE,   ID_HOLE_0,     138,        168,        12,   2,  .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_HOLE_1,     252,        168,        12,   2,  .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
     
     // {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,         CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
     {TYPE_SPRITE,   ID_CLOUD_0,     20,        CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},

@@ -26,11 +26,20 @@
 #define D_X 82 // DINO INIT X
 #define D_Y 124
 
-#define C_X_TARGET 20
-#define C_Y_TARGET 140
+#define C_X_START 320
+#define C_Y_START 130
+#define C_X_TARGET -12
+#define C_Y_TARGET 130
 
-#define C_X_START 290
-#define C_Y_START 140
+#define ROCK_X_START 320
+#define ROCK_Y_START 166
+#define ROCK_X_TARGET -12
+#define ROCK_Y_TARGET 166
+
+#define HOLE_X_START 320
+#define HOLE_Y_START 168
+#define HOLE_X_TARGET -12
+#define HOLE_Y_TARGET 168
 
 #define CLOUD_X_START 320
 #define CLOUD_Y_START 43

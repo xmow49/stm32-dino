@@ -22,13 +22,20 @@ int move_manager_init()
     elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
     move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
+    move_manager_move_element(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element(ID_ROCK_1, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element(ID_ROCK_2, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+
+    move_manager_move_element(ID_HOLE_0, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element(ID_HOLE_1, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
+
     // elements_manager_move_element(ID_CLOUD_1, abs(CLOUD_X_START - CLOUD_X_TARGET) * 2, CLOUD_Y_START);
     // move_manager_move_element(ID_CLOUD_1, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED / 2);
 
     return 0;
 }
 
-int move_manager_move_element(element_id_t element_id, int x, int y, int speed)
+int move_manager_move_element(element_id_t element_id, int x, int y, int in_n_frame)
 {
     element_t *element = elements_manager_find_element(element_id);
     if (element == NULL)
@@ -37,18 +44,18 @@ int move_manager_move_element(element_id_t element_id, int x, int y, int speed)
     }
     element->move.target_x = x;
     element->move.target_y = y;
-    element->move.speed = speed;
+    element->move.speed = in_n_frame;
 
     int dx = abs(element->x - x);
     int dy = abs(element->y - y);
 
     if (dx > dy)
     {
-        element->move.px_per_frame = dx / speed;
+        element->move.px_per_frame = dx / in_n_frame;
     }
     else
     {
-        element->move.px_per_frame = dy / speed;
+        element->move.px_per_frame = dy / in_n_frame;
     }
 
     element->move.speed_unit = SPEED_DELTA_FRAME;
@@ -65,11 +72,11 @@ int move_manager_move_element(element_id_t element_id, int x, int y, int speed)
             float fspeed;
             if (dx > dy)
             {
-                fspeed = fabs(element->x - x) / (float)speed;
+                fspeed = fabs(element->x - x) / (float)in_n_frame;
             }
             else
             {
-                fspeed = fabs(element->y - y) / (float)speed;
+                fspeed = fabs(element->y - y) / (float)in_n_frame;
             }
 
             element->move.speed = (int)(1.0 / fspeed);
@@ -104,6 +111,23 @@ int move_manager_finish_cb(element_id_t element_id)
     case ID_DINO:
     {
         dino_process_jump();
+        break;
+    }
+    case ID_ROCK_0:
+    case ID_ROCK_1:
+    case ID_ROCK_2:
+    {
+        elements_manager_move_element(element_id, ROCK_X_START, ROCK_Y_START);
+        move_manager_move_element(element_id, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+        break;
+    }
+
+    case ID_HOLE_0:
+    case ID_HOLE_1:
+    case ID_HOLE_2:
+    {
+        elements_manager_move_element(element_id, HOLE_X_START, HOLE_Y_START);
+        move_manager_move_element(element_id, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
         break;
     }
 

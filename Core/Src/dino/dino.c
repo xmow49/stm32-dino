@@ -24,7 +24,7 @@ bool_e readButton(void)
 	return HAL_GPIO_ReadPin(BUTTON_UP_PORT, BUTTON_UP_PIN);
 }
 
-volatile bool game_over = false;
+volatile bool game_over = true;
 volatile bool want_restart = false;
 int dino_main(void)
 {
@@ -94,15 +94,15 @@ int dino_main(void)
 			}
 			score_update();
 
-			// if (collision_check())
-			// {
-			// 	__disable_irq();
-			// 	game_over = true;
-			// 	__enable_irq();
-			// 	printf("Game Over\n\r");
-			// 	score_save();
-			// 	elements_manager_set_visible(ID_GAME_OVER, true);
-			// }
+			if (collision_check())
+			{
+				__disable_irq();
+				game_over = true;
+				__enable_irq();
+				printf("Game Over\n\r");
+				score_save();
+				elements_manager_set_visible(ID_GAME_OVER, true);
+			}
 		}
 	}
 }
