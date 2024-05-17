@@ -20,14 +20,17 @@
 #define COLOR_GROUND_DARK 0x0000
 
 #define DINO_GRAVITY_SPEED 5
-//#define CACTUS_SPEED 50
+// #define CACTUS_SPEED 50
 #define CACTUS_SPEED 40
 
-#define D_X 82 //DINO INIT X
+#define D_X 82 // DINO INIT X
 #define D_Y 124
 
-#define C_X 200
-#define C_Y 140
+#define C_X_TARGET 20
+#define C_Y_TARGET 140
+
+#define C_X_START 290
+#define C_Y_START 140
 
 #define CLOUD_SPEED 1000
 

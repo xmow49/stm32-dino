@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 
-
 #include "main.h"
 #include "dino/dino.h"
 #include "dino/sprites.h"
@@ -53,15 +52,6 @@ int dino_main(void)
 	uint32_t fps = 0;
 	uint32_t frame_time = 0;
 	uint32_t count = 0;
-
-//	while(1){
-//		elements_manager_move_element(ID_CACTUS_1, 20, 50);
-//		HAL_Delay(200);
-//		elements_manager_move_element(ID_CACTUS_1, 100, 50);
-//		HAL_Delay(200);
-//
-//	}
-
 	while (1)
 	{
 
@@ -72,7 +62,7 @@ int dino_main(void)
 			move_manager_stop_element(ID_DINO);
 			elements_manager_set_visible(ID_GAME_OVER, false);
 			score_save();
-			elements_manager_move_element(ID_CACTUS_1, C_X, C_Y);
+			elements_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET);
 			elements_manager_move_element(ID_DINO, D_X, D_Y);
 			elements_manager_update_full_screen();
 			score_reset();

@@ -17,7 +17,7 @@ jump_status_t jump_status = JUMP_NO;
 int move_manager_init()
 {
     jump_status = JUMP_NO;
-    move_manager_move_element(ID_CACTUS_1, 20, 140, CACTUS_SPEED);
+    move_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
     move_manager_move_element(ID_CLOUD_0, 0, 43, CLOUD_SPEED);
     move_manager_move_element(ID_CLOUD_1, 0, 43, CLOUD_SPEED);
 
@@ -89,8 +89,8 @@ int move_manager_finish_cb(element_id_t element_id)
     switch (element_id)
     {
     case ID_CACTUS_1:
-        elements_manager_move_element(ID_CACTUS_1, 290, 140);
-        move_manager_move_element(ID_CACTUS_1, 20, 140, CACTUS_SPEED);
+        elements_manager_move_element(ID_CACTUS_1, C_X_START, C_Y_START);
+        move_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
         break;
     case ID_CLOUD_0:
     case ID_CLOUD_1:

@@ -15,7 +15,7 @@
 element_t elements_list[] = {
     {TYPE_SPRITE,   ID_DINO,       D_X,  D_Y,   20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_CACTUS_1,   C_X,  C_Y,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CACTUS_1,   C_X_START,  C_Y_START,    9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
 
     {TYPE_SPRITE,   ID_GAME_OVER,   48,  53,    73,   9,  .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
     {TYPE_BITMAP,   ID_COPYRIGHT,   31,  178,  129,  26,  .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
@@ -134,8 +134,8 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     int x_offset = 0;
     int y_offset = 0;
 
-//    ILI9341_DrawFilledRectangle(200, 100, 210, 130, 0xFF00);
-//    ILI9341_DrawFilledRectangle(124, 100, 134, 130, 0xFF00);
+    //    ILI9341_DrawFilledRectangle(200, 100, 210, 130, 0xFF00);
+    //    ILI9341_DrawFilledRectangle(124, 100, 134, 130, 0xFF00);
     if (target_x < 0)
     {
         x_offset = abs(target_x);
@@ -173,7 +173,6 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         uint16_t bitmap_x = 0;
         uint16_t bitmap_y = 0;
 
-        fb_generate_background(framebuffer, element->x, element->y, fb_width, fb_height);
         if ((int32_t)element->x - (int32_t)target_x < 0)
         {
             bitmap_x = fb_width - (width * scale);
@@ -191,7 +190,6 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         {
             bitmap_y = 0;
         }
-        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
 
         uint16_t print_x = target_x;
         uint16_t print_y = target_y;
@@ -199,12 +197,16 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         {
             print_x = target_x - bitmap_x;
         }
-//        if (bitmap_y != 0)
-//        {
-//            print_y = target_y - bitmap_y;
-//        }
+        if (bitmap_y != 0)
+        {
+            print_y = target_y - bitmap_y;
+        }
+
+        fb_generate_background(framebuffer, print_x, print_y, fb_width, fb_height);
+        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
 
         ILI9341_putBitmap(print_x, print_y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
+        // ILI9341_DrawRectangle(print_x - 1, print_y - 1, print_x + fb_width + 1, print_y + fb_height + 1, 0x0000);
         // ILI9341_putBitmap(element->x + bitmap_x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         element->x = target_x;
         element->y = target_y;
