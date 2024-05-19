@@ -88,12 +88,14 @@ typedef struct
         int speed;
         int px_per_frame;
         speed_unit_t speed_unit;
+        uint32_t start_frame_index;
     } move;
     bool visible;
 } element_t;
 
 extern const uint16_t elements_count;
 extern element_t elements_list[];
+extern uint32_t frame_count;
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240

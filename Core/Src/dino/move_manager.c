@@ -13,21 +13,22 @@ typedef enum
 } jump_status_t;
 
 jump_status_t jump_status = JUMP_NO;
+uint32_t frame_count = 0;
 
 int move_manager_init()
 {
     jump_status = JUMP_NO;
-    move_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
 
     elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
     move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
-    move_manager_move_element(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
-    move_manager_move_element(ID_ROCK_1, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
-    move_manager_move_element(ID_ROCK_2, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_ROCK_1, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_ROCK_2, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
 
-    move_manager_move_element(ID_HOLE_0, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
-    move_manager_move_element(ID_HOLE_1, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_HOLE_0, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_HOLE_1, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
 
     // elements_manager_move_element(ID_CLOUD_1, abs(CLOUD_X_START - CLOUD_X_TARGET) * 2, CLOUD_Y_START);
     // move_manager_move_element(ID_CLOUD_1, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED / 2);
@@ -84,9 +85,47 @@ int move_manager_move_element(element_id_t element_id, int x, int y, int in_n_fr
     }
 
     element->move.status = MOVE_IN_PROGRESS;
+    element->move.start_frame_index = frame_count;
+
     return 0;
 }
 
+int move_manager_move_element_with_const_speed(element_id_t element_id, int x, int y, float px_per_frame)
+{
+    element_t *element = elements_manager_find_element(element_id);
+    if (element == NULL)
+    {
+        return -1;
+    }
+    int px = (int)px_per_frame;
+    float decimal = px_per_frame - px;
+
+    element->move.target_x = x;
+    element->move.target_y = y;
+
+    if (px_per_frame < 1)
+    {
+        element->move.px_per_frame = 1;
+    }
+    else
+    {
+        element->move.px_per_frame = px;
+    }
+
+    if (decimal == 0)
+    {
+        element->move.speed = 0;
+    }
+    else
+    {
+        element->move.speed = 1 / decimal;
+    }
+    element->move.speed_unit = SPEED_N_FRAME;
+    element->move.speed_unit = SPEED_N_FRAME;
+    element->move.status = MOVE_IN_PROGRESS;
+    element->move.start_frame_index = frame_count;
+    return 0;
+}
 int move_manager_stop_element(element_id_t element_id)
 {
     element_t *element = elements_manager_find_element(element_id);
@@ -101,7 +140,7 @@ int move_manager_finish_cb(element_id_t element_id)
     {
     case ID_CACTUS_1:
         elements_manager_move_element(ID_CACTUS_1, C_X_START, C_Y_START);
-        move_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+        move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
         break;
     case ID_CLOUD_0:
     case ID_CLOUD_1:
@@ -119,7 +158,7 @@ int move_manager_finish_cb(element_id_t element_id)
     case ID_ROCK_2:
     {
         elements_manager_move_element(element_id, ROCK_X_START, ROCK_Y_START);
-        move_manager_move_element(element_id, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
+        move_manager_move_element_with_const_speed(element_id, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
         break;
     }
 
@@ -128,7 +167,7 @@ int move_manager_finish_cb(element_id_t element_id)
     case ID_HOLE_2:
     {
         elements_manager_move_element(element_id, HOLE_X_START, HOLE_Y_START);
-        move_manager_move_element(element_id, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
+        move_manager_move_element_with_const_speed(element_id, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
         break;
     }
 
@@ -138,8 +177,6 @@ int move_manager_finish_cb(element_id_t element_id)
 
     return 0;
 }
-
-uint32_t frame_count = 0;
 
 int move_manager_loop()
 {
@@ -164,7 +201,7 @@ int move_manager_loop()
             break;
 
         case SPEED_N_FRAME:
-            if (frame_count % element->move.speed != 0)
+            if ((frame_count - element->move.start_frame_index) % element->move.speed != 0)
             {
                 continue;
             }

@@ -7,6 +7,7 @@
 int move_manager_init(void);
 
 int move_manager_move_element(element_id_t element_id, int x, int y, int speed);
+int move_manager_move_element_with_const_speed(element_id_t element_id, int x, int y, float px_per_frame);
 
 int move_manager_loop(void);
 

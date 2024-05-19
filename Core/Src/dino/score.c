@@ -64,8 +64,8 @@ void score_update()
 static void score_draw()
 {
 
-    ILI9341_printf(10, 10, &Font_11x18, COLOR_TEXT_LIGHT, COLOR_SKY_CURRENT, "%lu", score);
-    ILI9341_printf(250, 10, &Font_11x18, COLOR_TEXT_LIGHT, COLOR_SKY_CURRENT, "%lu", high_score);
+    ILI9341_printf(10, 10, &Font_11x18, COLOR_TEXT_CURRENT, COLOR_SKY_CURRENT, "%lu", score);
+    ILI9341_printf(250, 10, &Font_11x18, COLOR_TEXT_CURRENT, COLOR_SKY_CURRENT, "%lu", high_score);
 }
 
 void score_save()

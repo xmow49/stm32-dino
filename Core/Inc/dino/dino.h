@@ -23,7 +23,10 @@
 
 #define DINO_GRAVITY_SPEED 5
 // #define CACTUS_SPEED 50
-#define CACTUS_SPEED 40
+
+extern float ground_speed;
+
+#define CACTUS_SPEED ground_speed // 40
 
 #define D_X 82 // DINO INIT X
 #define D_Y 124
