@@ -32,8 +32,10 @@ typedef enum
 
     ID_CLOUD_0,
     ID_CLOUD_1,
+    ID_MOON,
 
-    ID_DINO,
+    ID_DINO_STAND,
+    ID_DINO_SIT,
     ID_BIRD,
 
     ID_COPYRIGHT,
@@ -104,5 +106,7 @@ element_t *elements_manager_find_element(element_id_t id);
 
 int elements_manager_update_element(element_id_t id);
 int elements_manager_set_visible(element_id_t id, bool visible);
+int elements_manager_set_dark_mode(bool state);
+bool elements_manager_get_dark_mode();
 
 #endif // ELEMENTS_MANAGER_H

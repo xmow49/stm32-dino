@@ -219,17 +219,17 @@ void EXTI0_IRQHandler()
 
 void EXTI1_IRQHandler()
 {
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
 }
 
 void EXTI2_IRQHandler()
 {
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
 }
 
 void EXTI3_IRQHandler()
 {
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
 }
 
 void EXTI4_IRQHandler()

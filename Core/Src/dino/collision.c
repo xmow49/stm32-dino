@@ -24,7 +24,7 @@
 bool collision_check()
 {
 
-    element_t *dino = elements_manager_find_element(ID_DINO);
+    element_t *dino = elements_manager_find_element(current_dino);
     element_t *cactus = elements_manager_find_element(ID_CACTUS_1);
 
     if ((dino->x + (dino->width * dino->data.sprite.scale) > cactus->x) &&

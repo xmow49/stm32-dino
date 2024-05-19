@@ -14,7 +14,8 @@
 // clang-format off
 element_t elements_list[] = {
     {TYPE_SPRITE,   ID_CROWN,       220,          8,        18, 15,  .data.sprite = {1, sprite_crown},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_DINO,        D_X,        D_Y,      20,  22,  .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_DINO_STAND,  D_X,        D_Y,      20,  22,  .data.sprite = {2, sprite_dino_stand},  { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_DINO_SIT,    D_X,        D_Y+20,      28,  12,  .data.sprite = {2, sprite_dino_sit},    { MOVE_NO }, false},
 
     {TYPE_SPRITE,   ID_CACTUS_1,    C_X_START,  C_Y_START, 9,  19,  .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
 
@@ -35,6 +36,8 @@ element_t elements_list[] = {
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
+
+static bool dark_mode = false;
 
 // clang-format on
 
@@ -213,6 +216,28 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
     return 0;
 }
 
+int elements_manager_clear_element(element_id_t id)
+{
+    element_t *element = elements_manager_find_element(id);
+    if (!element)
+    {
+        return -1;
+    }
+    if (element->type == TYPE_FILL)
+    {
+        return -1;
+    }
+
+    int width = element->width;
+    int height = element->height;
+    uint16_t scale = element->data.sprite.scale;
+
+    fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
+    ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
+
+    return 0;
+}
+
 int elements_manager_set_visible(element_id_t id, bool visible)
 {
     element_t *element = elements_manager_find_element(id);
@@ -221,7 +246,42 @@ int elements_manager_set_visible(element_id_t id, bool visible)
         return -1;
     }
     element->visible = visible;
-    elements_manager_update_element(id);
+
+    if (visible)
+    {
+        elements_manager_update_element(id);
+    }
+    else
+    {
+        elements_manager_clear_element(id);
+    }
 
     return 0;
+}
+
+int elements_manager_set_dark_mode(bool state)
+{
+    element_t *sky = elements_manager_find_element(ID_SKY);
+    element_t *ground = elements_manager_find_element(ID_GROUND);
+    element_t *moon = elements_manager_find_element(ID_MOON);
+
+    if (state)
+    {
+        sky->data.fill.color = COLOR_SKY_DARK;
+        ground->data.fill.color = COLOR_GROUND_DARK;
+        elements_manager_set_visible(ID_MOON, true);
+    }
+    else
+    {
+        sky->data.fill.color = COLOR_SKY_LIGHT;
+        ground->data.fill.color = COLOR_GROUND_LIGHT;
+        elements_manager_set_visible(ID_MOON, false);
+    }
+    dark_mode = state;
+    return 0;
+}
+
+bool elements_manager_get_dark_mode()
+{
+    return dark_mode;
 }

@@ -106,7 +106,7 @@ int main(void)
 
   MX_GPIO_Init();
 
-  MX_USART2_UART_Init();
+  // MX_USART2_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
@@ -303,14 +303,14 @@ static void MX_GPIO_Init(void)
   // GPIO_InitStruct.Pull = GPIO_NOPULL;
   // HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BUTTON_RIGHT_Pin BUTTON_DOWN_Pin */
-  GPIO_InitStruct.Pin = BUTTON_RIGHT_PIN | BUTTON_DOWN_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  // /*Configure GPIO pins : BUTTON_RIGHT_Pin BUTTON_DOWN_Pin */
+  // GPIO_InitStruct.Pin = BUTTON_RIGHT_PIN | BUTTON_DOWN_PIN;
+  // GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  // GPIO_InitStruct.Pull = GPIO_NOPULL;
+  // HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : BUTTON_UP_PIN BUTTON_LEFT_PIN */
-  GPIO_InitStruct.Pin = BUTTON_UP_PIN | BUTTON_LEFT_PIN;
+  GPIO_InitStruct.Pin = BUTTON_UP_PIN | BUTTON_LEFT_PIN | BUTTON_RIGHT_PIN | BUTTON_DOWN_PIN;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -326,8 +326,8 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_EnableIRQ(EXTI3_IRQn);
   HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+  // HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  // HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
   /* USER CODE END MX_GPIO_Init_2 */

@@ -14,18 +14,11 @@
 #include "dino/move_manager.h"
 #include "dino/score.h"
 
-void writeLED(bool_e b)
-{
-	HAL_GPIO_WritePin(LED_GREEN_GPIO, LED_GREEN_PIN, b);
-}
-
-bool_e readButton(void)
-{
-	return HAL_GPIO_ReadPin(BUTTON_UP_PORT, BUTTON_UP_PIN);
-}
-
 volatile bool game_over = true;
 volatile bool want_restart = false;
+volatile element_id_t current_dino = ID_DINO_STAND;
+volatile uint8_t dino_new_position = 0; // 0 = no move, 1 = set to stand up, 2 = set to sit down
+
 int dino_main(void)
 {
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -44,6 +37,8 @@ int dino_main(void)
 
 	ILI9341_Init();
 	ILI9341_Rotate(ILI9341_Orientation_Landscape_2);
+
+	elements_manager_set_dark_mode(true);
 	elements_manager_update_full_screen();
 	move_manager_init();
 	score_init();
@@ -59,25 +54,46 @@ int dino_main(void)
 		{
 			printf("reinit\n\r");
 			move_manager_stop_element(ID_CACTUS_1);
-			move_manager_stop_element(ID_DINO);
+			move_manager_stop_element(current_dino);
 			elements_manager_set_visible(ID_GAME_OVER, false);
 			score_save();
 			elements_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET);
-			elements_manager_move_element(ID_DINO, D_X, D_Y);
+			elements_manager_move_element(current_dino, D_X, D_Y);
 			elements_manager_update_full_screen();
 			score_reset();
 			HAL_Delay(1000);
 			move_manager_init();
 
-			__disable_irq();
 			game_over = false;
 			want_restart = false;
-			__enable_irq();
 		}
 
 		if (!game_over)
 		{
 			last_time = HAL_GetTick();
+			if (dino_new_position)
+			{
+				switch (dino_new_position)
+				{
+				case 1:
+					// stand
+					elements_manager_set_visible(ID_DINO_SIT, false);
+					elements_manager_set_visible(ID_DINO_STAND, true);
+					current_dino = ID_DINO_STAND;
+					break;
+				case 2:
+					// sit
+					elements_manager_set_visible(ID_DINO_STAND, false);
+					elements_manager_set_visible(ID_DINO_SIT, true);
+					current_dino = ID_DINO_SIT;
+					break;
+				default:
+					break;
+				}
+				__disable_irq();
+				dino_new_position = 0;
+				__enable_irq();
+			}
 			move_manager_loop();
 			frame_time = HAL_GetTick() - last_time;
 			fps = 1000 / (frame_time == 0 ? 1 : frame_time);
@@ -106,29 +122,59 @@ int dino_main(void)
 		}
 	}
 }
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	static uint32_t start_time = 0;
-	if (!readButton())
+	bool up_state = HAL_GPIO_ReadPin(BUTTON_UP_PORT, BUTTON_UP_PIN);
+	bool down_state = HAL_GPIO_ReadPin(BUTTON_DOWN_PORT, BUTTON_LEFT_PIN);
+
+	switch (GPIO_Pin)
 	{
-		start_time = HAL_GetTick();
-		if (game_over)
+	case BUTTON_UP_PIN:
+	{
+		if (up_state == 0)
 		{
-			want_restart = true;
+			start_time = HAL_GetTick();
+			if (game_over)
+			{
+				want_restart = true;
+			}
+			else
+			{
+				if (current_dino == ID_DINO_STAND && elements_manager_find_element(current_dino)->move.status == MOVE_NO)
+				{
+					dino_process_jump();
+				}
+			}
 		}
 		else
 		{
-			if (elements_manager_find_element(ID_DINO)->move.status == MOVE_NO)
+			if (HAL_GetTick() - start_time > 3000)
 			{
-				dino_process_jump();
+				score_erase();
 			}
 		}
+		break;
 	}
-	else
+
+	case BUTTON_LEFT_PIN:
 	{
-		if (HAL_GetTick() - start_time > 3000)
+		if (elements_manager_find_element(current_dino)->move.status == MOVE_NO)
 		{
-			score_erase();
+			if (down_state == 0)
+			{
+				dino_new_position = 2; // sit
+			}
+			else
+			{
+				dino_new_position = 1; // stand
+			}
 		}
+		break;
+	}
+
+	default:
+		break;
 	}
 }

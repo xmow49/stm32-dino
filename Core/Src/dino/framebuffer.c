@@ -1,4 +1,5 @@
 #include "dino/framebuffer.h"
+#include "dino/dino.h"
 #include <lib/tft_ili9341/stm32f1_ili9341.h>
 #include "dino/elements_manager.h"
 
@@ -62,8 +63,13 @@ void fb_draw_bitmap(uint16_t *framebuffer, int16_t x0, int16_t y0, int16_t width
                     {
                         continue;
                     }
+                    uint16_t color = img[y * width + x];
+                    if (elements_manager_get_dark_mode() && color == COLOR_SKY_LIGHT)
+                    {
+                        color = COLOR_SKY_DARK;
+                    }
 
-                    framebuffer[(y0 + y * scale + k) * fb_width + x0 + x * scale + j] = img[y * width + x];
+                    framebuffer[(y0 + y * scale + k) * fb_width + x0 + x * scale + j] = color;
                 }
             }
         }

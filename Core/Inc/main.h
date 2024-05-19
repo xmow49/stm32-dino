@@ -60,16 +60,16 @@ extern "C"
   /* Private defines -----------------------------------------------------------*/
 
 #define BUTTON_UP_PORT GPIOA
-#define BUTTON_UP_PIN 0
+#define BUTTON_UP_PIN GPIO_PIN_0
 
-#define BUTTON_DOWN_PORT GPIOC
-#define BUTTON_DOWN_PIN 15
+#define BUTTON_DOWN_PORT GPIOA
+#define BUTTON_DOWN_PIN GPIO_PIN_2
 
 #define BUTTON_LEFT_PORT GPIOA
-#define BUTTON_LEFT_PIN 1
+#define BUTTON_LEFT_PIN GPIO_PIN_1
 
-#define BUTTON_RIGHT_PORT GPIOC
-#define BUTTON_RIGHT_PIN 14
+#define BUTTON_RIGHT_PORT GPIOA
+#define BUTTON_RIGHT_PIN GPIO_PIN_3
 
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC

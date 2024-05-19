@@ -108,7 +108,8 @@ int move_manager_finish_cb(element_id_t element_id)
         elements_manager_move_element(element_id, CLOUD_X_START, CLOUD_Y_START);
         move_manager_move_element(element_id, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
         break;
-    case ID_DINO:
+    case ID_DINO_SIT:
+    case ID_DINO_STAND:
     {
         dino_process_jump();
         break;
@@ -214,19 +215,19 @@ void dino_process_jump()
     {
     case JUMP_NO:
         jump_status = JUMP_UP_FAST;
-        move_manager_move_element(ID_DINO, 82, 85, DINO_GRAVITY_SPEED);
+        move_manager_move_element(current_dino, 82, 85, DINO_GRAVITY_SPEED);
         break;
     case JUMP_UP_FAST:
         jump_status = JUMP_UP_SLOW;
-        move_manager_move_element(ID_DINO, 82, 70, DINO_GRAVITY_SPEED);
+        move_manager_move_element(current_dino, 82, 70, DINO_GRAVITY_SPEED);
         break;
     case JUMP_UP_SLOW:
         jump_status = JUMP_DOWN_SLOW;
-        move_manager_move_element(ID_DINO, 82, 85, DINO_GRAVITY_SPEED);
+        move_manager_move_element(current_dino, 82, 85, DINO_GRAVITY_SPEED);
         break;
     case JUMP_DOWN_SLOW:
         jump_status = JUMP_DOWN_FAST;
-        move_manager_move_element(ID_DINO, 82, 124, DINO_GRAVITY_SPEED);
+        move_manager_move_element(current_dino, 82, 124, DINO_GRAVITY_SPEED);
         break;
     case JUMP_DOWN_FAST:
         jump_status = JUMP_NO;
