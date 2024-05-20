@@ -17,14 +17,13 @@
 volatile bool game_over = true;
 volatile bool want_restart = false;
 volatile element_id_t current_dino = ID_DINO_STAND;
-volatile uint8_t dino_new_position = 0; // 0 = no move, 1 = set to stand up, 2 = set to sit down
 float ground_speed = 0.0;
+
+#define DEMO_MODE
 
 void dino_update_ground_speed()
 {
 	move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
-
-	elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
 	move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
 	move_manager_move_element_with_const_speed(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
@@ -75,7 +74,7 @@ int dino_main(void)
 			score_save();
 			frame_count = 0;
 			elements_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET);
-			elements_manager_move_element(current_dino, D_X, D_Y);
+			elements_manager_move_element(ID_DINO_STAND, D_X, D_Y);
 			elements_manager_update_full_screen();
 			score_reset();
 			HAL_Delay(1000);
@@ -89,29 +88,6 @@ int dino_main(void)
 		if (!game_over)
 		{
 			last_time = HAL_GetTick();
-			if (dino_new_position)
-			{
-				switch (dino_new_position)
-				{
-				case 1:
-					// stand
-					elements_manager_set_visible(ID_DINO_SIT, false);
-					elements_manager_set_visible(ID_DINO_STAND, true);
-					current_dino = ID_DINO_STAND;
-					break;
-				case 2:
-					// sit
-					elements_manager_set_visible(ID_DINO_STAND, false);
-					elements_manager_set_visible(ID_DINO_SIT, true);
-					current_dino = ID_DINO_SIT;
-					break;
-				default:
-					break;
-				}
-				__disable_irq();
-				dino_new_position = 0;
-				__enable_irq();
-			}
 
 			if (ground_speed < 7)
 			{
@@ -122,6 +98,15 @@ int dino_main(void)
 				}
 			}
 
+#ifdef DEMO_MODE
+			element_t *cactus = elements_manager_find_element(ID_CACTUS_1);
+			if (cactus->x < 150 && cactus->x > 100)
+			{
+				dino_trigger_jump();
+			}
+#endif
+
+			dino_process_position();
 			move_manager_loop();
 			frame_time = HAL_GetTick() - last_time;
 			fps = 1000 / (frame_time == 0 ? 1 : frame_time);
@@ -146,6 +131,7 @@ int dino_main(void)
 				printf("Game Over\n\r");
 				score_save();
 				elements_manager_set_visible(ID_GAME_OVER, true);
+				elements_manager_update_element(current_dino);
 			}
 		}
 	}
@@ -188,17 +174,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	case BUTTON_LEFT_PIN:
 	{
-		if (elements_manager_find_element(current_dino)->move.status == MOVE_NO)
-		{
-			if (down_state == 0)
-			{
-				dino_new_position = 2; // sit
-			}
-			else
-			{
-				dino_new_position = 1; // stand
-			}
-		}
+
+		dino_trigger_position(down_state + 1);
+
 		break;
 	}
 

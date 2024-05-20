@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "stm32f1xx_hal.h"
 
 #include "dino/move_manager.h"
 #include "dino/dino.h"
@@ -6,13 +7,18 @@
 typedef enum
 {
     JUMP_NO,
+    JUMP_START,
     JUMP_UP_FAST,
     JUMP_UP_SLOW,
     JUMP_DOWN_SLOW,
     JUMP_DOWN_FAST,
+    JUMP_DOWN_FALL,
+    JUMP_WAIT_GROUND,
 } jump_status_t;
 
 jump_status_t jump_status = JUMP_NO;
+volatile uint8_t dino_new_position = 0; // 0 = no move, 1 = set to sit down, 2 = set to stand up
+
 uint32_t frame_count = 0;
 
 int move_manager_init()
@@ -22,6 +28,9 @@ int move_manager_init()
 
     elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
     move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
+
+    elements_manager_move_element(ID_CLOUD_1, CLOUD_X_START / 2, CLOUD_Y_START);
+    move_manager_move_element(ID_CLOUD_1, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
     move_manager_move_element_with_const_speed(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
     move_manager_move_element_with_const_speed(ID_ROCK_1, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
@@ -148,7 +157,6 @@ int move_manager_finish_cb(element_id_t element_id)
         elements_manager_move_element(element_id, CLOUD_X_START, CLOUD_Y_START);
         move_manager_move_element(element_id, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
         break;
-    case ID_DINO_SIT:
     case ID_DINO_STAND:
     {
         dino_process_jump();
@@ -251,6 +259,7 @@ void dino_trigger_jump()
 {
     if (jump_status == JUMP_NO)
     {
+        jump_status = JUMP_START;
         dino_process_jump();
     }
 }
@@ -260,25 +269,73 @@ void dino_process_jump()
     switch (jump_status)
     {
     case JUMP_NO:
+        break;
+
+    case JUMP_START:
         jump_status = JUMP_UP_FAST;
-        move_manager_move_element(current_dino, 82, 85, DINO_GRAVITY_SPEED);
+        move_manager_move_element(ID_DINO_STAND, 82, 85, DINO_GRAVITY_SPEED);
         break;
     case JUMP_UP_FAST:
         jump_status = JUMP_UP_SLOW;
-        move_manager_move_element(current_dino, 82, 70, DINO_GRAVITY_SPEED);
+        move_manager_move_element(ID_DINO_STAND, 82, 70, DINO_GRAVITY_SPEED);
         break;
     case JUMP_UP_SLOW:
         jump_status = JUMP_DOWN_SLOW;
-        move_manager_move_element(current_dino, 82, 85, DINO_GRAVITY_SPEED);
+        move_manager_move_element(ID_DINO_STAND, 82, 85, DINO_GRAVITY_SPEED);
         break;
     case JUMP_DOWN_SLOW:
         jump_status = JUMP_DOWN_FAST;
-        move_manager_move_element(current_dino, 82, 124, DINO_GRAVITY_SPEED);
+        move_manager_move_element(ID_DINO_STAND, 82, 124, DINO_GRAVITY_SPEED);
         break;
     case JUMP_DOWN_FAST:
+        jump_status = JUMP_NO;
+        break;
+    case JUMP_DOWN_FALL:
+        jump_status = JUMP_WAIT_GROUND;
+        move_manager_move_element(ID_DINO_STAND, 82, 124, 1);
+        break;
+    case JUMP_WAIT_GROUND:
         jump_status = JUMP_NO;
         break;
     default:
         break;
     }
+}
+
+void dino_process_position()
+{
+    if (dino_new_position)
+    {
+        if (jump_status != JUMP_NO)
+        {
+            jump_status = JUMP_DOWN_FALL;
+            dino_process_jump();
+            return;
+        }
+        switch (dino_new_position)
+        {
+        case 2:
+            // stand
+            elements_manager_set_visible(ID_DINO_SIT, false);
+            elements_manager_set_visible(ID_DINO_STAND, true);
+            current_dino = ID_DINO_STAND;
+            break;
+        case 1:
+            // sit
+            elements_manager_set_visible(ID_DINO_STAND, false);
+            elements_manager_set_visible(ID_DINO_SIT, true);
+            current_dino = ID_DINO_SIT;
+            break;
+        default:
+            break;
+        }
+        __disable_irq();
+        dino_new_position = 0;
+        __enable_irq();
+    }
+}
+
+void dino_trigger_position(uint8_t position)
+{
+    dino_new_position = position;
 }

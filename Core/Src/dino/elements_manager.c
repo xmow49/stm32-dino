@@ -29,8 +29,8 @@ element_t elements_list[] = {
     {TYPE_SPRITE,   ID_HOLE_0,     138,        168,        12,   2,  .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
     {TYPE_SPRITE,   ID_HOLE_1,     252,        168,        12,   2,  .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
     
-    // {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,         CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_CLOUD_0,     20,        CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CLOUD_1,     CLOUD_X_START,         CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,         CLOUD_Y_START,        28,  13,  .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
     {TYPE_FILL,     ID_SKY,          0,         0,       320, 168,  .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }, true},
     {TYPE_FILL,     ID_GROUND,      0,          169,      320,  72,  .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }, true},
 };

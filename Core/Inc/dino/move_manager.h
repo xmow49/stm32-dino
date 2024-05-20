@@ -16,4 +16,7 @@ int move_manager_stop_element(element_id_t element_id);
 void dino_process_jump();
 void dino_trigger_jump();
 
+void dino_trigger_position(uint8_t position);
+void dino_process_position();
+
 #endif // MOVE_MANAGER_H
