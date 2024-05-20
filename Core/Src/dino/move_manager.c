@@ -103,25 +103,26 @@ int move_manager_move_element_with_const_speed(element_id_t element_id, int x, i
     element->move.target_x = x;
     element->move.target_y = y;
 
-    if (px_per_frame < 1)
-    {
-        element->move.px_per_frame = 1;
-    }
-    else
-    {
-        element->move.px_per_frame = px;
-    }
+    // if (px_per_frame < 1)
+    // {
+    //     element->move.px_per_frame = 1;
+    // }
+    // else
+    // {
+    //     element->move.px_per_frame = px;
+    // }
 
-    if (decimal == 0)
-    {
-        element->move.speed = 0;
-    }
-    else
-    {
-        element->move.speed = 1 / decimal;
-    }
-    element->move.speed_unit = SPEED_N_FRAME;
-    element->move.speed_unit = SPEED_N_FRAME;
+    // if (decimal == 0)
+    // {
+    //     element->move.speed = 0;
+    // }
+    // else
+    // {
+    //     element->move.speed = 1 / decimal;
+    // }
+    // element->move.speed_unit = SPEED_N_FRAME;
+    element->move.speed_unit = SPEED_DELTA_FRAME;
+    element->move.px_per_frame = px;
     element->move.status = MOVE_IN_PROGRESS;
     element->move.start_frame_index = frame_count;
     return 0;
@@ -244,6 +245,14 @@ int move_manager_loop()
     }
     frame_count++;
     return 0;
+}
+
+void dino_trigger_jump()
+{
+    if (jump_status == JUMP_NO)
+    {
+        dino_process_jump();
+    }
 }
 
 void dino_process_jump()

@@ -14,5 +14,6 @@ int move_manager_loop(void);
 int move_manager_stop_element(element_id_t element_id);
 
 void dino_process_jump();
+void dino_trigger_jump();
 
 #endif // MOVE_MANAGER_H

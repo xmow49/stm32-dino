@@ -73,6 +73,7 @@ int dino_main(void)
 			move_manager_stop_element(current_dino);
 			elements_manager_set_visible(ID_GAME_OVER, false);
 			score_save();
+			frame_count = 0;
 			elements_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET);
 			elements_manager_move_element(current_dino, D_X, D_Y);
 			elements_manager_update_full_screen();
@@ -114,10 +115,9 @@ int dino_main(void)
 
 			if (ground_speed < 7)
 			{
-				if (frame_count % 10 == 0)
+				if (frame_count % 20 == 0)
 				{
-
-					ground_speed += 0.05;
+					ground_speed += 1;
 					dino_update_ground_speed();
 				}
 			}
@@ -170,9 +170,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			}
 			else
 			{
-				if (current_dino == ID_DINO_STAND && elements_manager_find_element(current_dino)->move.status == MOVE_NO)
+				if (current_dino == ID_DINO_STAND)
 				{
-					dino_process_jump();
+					dino_trigger_jump();
 				}
 			}
 		}
