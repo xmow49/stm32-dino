@@ -19,11 +19,11 @@ volatile bool want_restart = false;
 volatile element_id_t current_dino = ID_DINO_STAND;
 float ground_speed = 0.0;
 
-#define DEMO_MODE
+//#define DEMO_MODE
 
 void dino_update_ground_speed()
 {
-	move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+	move_manager_move_element_with_const_speed(ID_CACTUS, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
 	move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
 	move_manager_move_element_with_const_speed(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
@@ -68,12 +68,12 @@ int dino_main(void)
 		if (want_restart)
 		{
 			printf("reinit\n\r");
-			move_manager_stop_element(ID_CACTUS_1);
+			move_manager_stop_element(ID_CACTUS);
 			move_manager_stop_element(current_dino);
 			elements_manager_set_visible(ID_GAME_OVER, false);
 			score_save();
 			frame_count = 0;
-			elements_manager_move_element(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET);
+			elements_manager_move_element(ID_CACTUS, C_X_TARGET, C_Y_TARGET);
 			elements_manager_move_element(ID_DINO_STAND, D_X, D_Y);
 			elements_manager_update_full_screen();
 			score_reset();
@@ -99,7 +99,7 @@ int dino_main(void)
 			}
 
 #ifdef DEMO_MODE
-			element_t *cactus = elements_manager_find_element(ID_CACTUS_1);
+			element_t *cactus = elements_manager_find_element(ID_CACTUS);
 			if (cactus->x < 150 && cactus->x > 100)
 			{
 				dino_trigger_jump();

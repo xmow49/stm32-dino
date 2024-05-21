@@ -12,5 +12,8 @@ extern const uint16_t sprite_cloud[];
 extern const uint16_t sprite_crown[];
 extern const uint16_t sprite_rock[];
 extern const uint16_t sprite_hole[];
+extern const uint16_t sprite_bird_down[];
+extern const uint16_t sprite_bird_up[];
+extern const uint16_t sprite_moon[];
 
 #endif // SPRITES_H

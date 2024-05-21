@@ -3,6 +3,7 @@
 
 #include "dino/move_manager.h"
 #include "dino/dino.h"
+#include "dino/sprites.h"
 #include <math.h>
 typedef enum
 {
@@ -24,7 +25,7 @@ uint32_t frame_count = 0;
 int move_manager_init()
 {
     jump_status = JUMP_NO;
-    move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+    move_manager_move_element_with_const_speed(ID_CACTUS, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
 
     elements_manager_move_element(ID_CLOUD_0, CLOUD_X_START, CLOUD_Y_START);
     move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
@@ -148,9 +149,9 @@ int move_manager_finish_cb(element_id_t element_id)
 
     switch (element_id)
     {
-    case ID_CACTUS_1:
-        elements_manager_move_element(ID_CACTUS_1, C_X_START, C_Y_START);
-        move_manager_move_element_with_const_speed(ID_CACTUS_1, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+    case ID_CACTUS:
+        elements_manager_move_element(ID_CACTUS, C_X_START, C_Y_START);
+        move_manager_move_element_with_const_speed(ID_CACTUS, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
         break;
     case ID_CLOUD_0:
     case ID_CLOUD_1:
@@ -251,6 +252,18 @@ int move_manager_loop()
         }
         elements_manager_move_element(element->id, new_x, new_y);
     }
+
+    // bird animation
+    element_t *bird = elements_manager_find_element(ID_BIRD);
+    if (bird->visible)
+    {
+        if (frame_count % 8 == 0)
+        {
+            bird->data.sprite.sprite = bird->data.sprite.sprite == sprite_bird_down ? sprite_bird_up : sprite_bird_down;
+            elements_manager_update_element(ID_BIRD);
+        }
+    }
+
     frame_count++;
     return 0;
 }

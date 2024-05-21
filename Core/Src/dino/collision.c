@@ -25,7 +25,7 @@ bool collision_check()
 {
 
     element_t *dino = elements_manager_find_element(current_dino);
-    element_t *cactus = elements_manager_find_element(ID_CACTUS_1);
+    element_t *cactus = elements_manager_find_element(ID_CACTUS);
     int dino_right = dino->x + (dino->width * dino->data.sprite.scale);
     int cactus_right = cactus->x + (cactus->width * cactus->data.sprite.scale);
     int dino_bottom = dino->y + (dino->height * dino->data.sprite.scale);

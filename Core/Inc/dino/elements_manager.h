@@ -26,9 +26,8 @@ typedef enum
     ID_HOLE_1,
     ID_HOLE_2,
 
-    ID_CACTUS_0,
-    ID_CACTUS_1,
-    ID_CACTUS_2,
+    ID_CACTUS,
+    ID_BIRD,
 
     ID_CLOUD_0,
     ID_CLOUD_1,
@@ -36,7 +35,6 @@ typedef enum
 
     ID_DINO_STAND,
     ID_DINO_SIT,
-    ID_BIRD,
 
     ID_COPYRIGHT,
     ID_GAME_OVER,

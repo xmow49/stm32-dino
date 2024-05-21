@@ -36,6 +36,11 @@ extern float ground_speed;
 #define C_X_TARGET -20
 #define C_Y_TARGET 131
 
+#define B_X_START 100 // BIRD
+#define B_Y_START 50
+#define B_X_TARGET -20
+#define B_Y_TARGET 131
+
 #define ROCK_X_START 320
 #define ROCK_Y_START 166
 #define ROCK_X_TARGET -20
