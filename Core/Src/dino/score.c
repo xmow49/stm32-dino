@@ -25,7 +25,7 @@ static void score_draw();
 
 #define FLASH_ADDR 0x0801FC00
 
-static const uint32_t *high_score_ptr = 0x0801FC00;
+static const uint32_t high_score_ptr = 0x0801FC00;
 
 void score_init()
 {

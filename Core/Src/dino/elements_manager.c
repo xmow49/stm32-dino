@@ -13,28 +13,28 @@
 
 // clang-format off
 element_t elements_list[] = {
-    {TYPE_SPRITE,   ID_CROWN,       220,            8,              18,     15,     .data.sprite = {1, sprite_crown},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_DINO_STAND,  D_X,            D_Y,            20,     22,     .data.sprite = {2, sprite_dino_stand}, { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_DINO_SIT,    D_X,            D_Y+20,         28,     12,     .data.sprite = {2, sprite_dino_sit},   { MOVE_NO }, false},
+    {TYPE_SPRITE,   ID_CROWN,       220,            8,              18,     15,     .data.sprite = {1, sprite_crown},       { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_DINO_STAND,  D_X,            D_Y,            20,     22,     .data.sprite = {2, sprite_dino_stand},  { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_DINO_SIT,    D_X,            D_Y+20,         28,     12,     .data.sprite = {2, sprite_dino_sit},    { MOVE_NO }, false},
 
-    {TYPE_SPRITE,   ID_BIRD,        B_X_START,      B_Y_START,      21,     16,     .data.sprite = {2, sprite_bird_down},  { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_CACTUS,      C_X_START,      C_Y_START,      9,      19,     .data.sprite = {2, sprite_cactus},     { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_BIRD,        B_X_START,      B_Y_START,      21,     16,     .data.sprite = {2, sprite_bird_down},   { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CACTUS,      C_X_START,      C_Y_START,      9,      19,     .data.sprite = {2, sprite_cactus},      { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_GAME_OVER,   48,             53,             73,     9,      .data.sprite = {3, sprite_gameover},   { MOVE_NO }, false}, //5913
-    {TYPE_BITMAP,   ID_COPYRIGHT,   31,             178,            129,    26,     .data.sprite = {2, sprite_copyright},  { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_GAME_OVER,   48,             53,             73,     9,      .data.sprite = {3, sprite_gameover},    { MOVE_NO }, false}, //5913
+    {TYPE_BITMAP,   ID_COPYRIGHT,   31,             178,            129,    26,     .data.sprite = {2, sprite_copyright},   { MOVE_NO }, true},
     
-    {TYPE_SPRITE,   ID_ROCK_0,      45,             165,            11,     3,      .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_ROCK_1,      212,            165,            11,     3,      .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_ROCK_2,      308,            165,            11,     3,      .data.sprite = {1, sprite_rock},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_ROCK_0,      45,             165,            11,     3,      .data.sprite = {1, sprite_rock},        { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_ROCK_1,      212,            165,            11,     3,      .data.sprite = {1, sprite_rock},        { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_ROCK_2,      308,            165,            11,     3,      .data.sprite = {1, sprite_rock},        { MOVE_NO }, true},
 
-    {TYPE_SPRITE,   ID_HOLE_0,      138,            168,            12,     2,      .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_HOLE_1,      252,            168,            12,     2,      .data.sprite = {1, sprite_hole},      { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_HOLE_0,      138,            168,            12,     2,      .data.sprite = {1, sprite_hole},        { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_HOLE_1,      252,            168,            12,     2,      .data.sprite = {1, sprite_hole},        { MOVE_NO }, true},
     
-    {TYPE_SPRITE,   ID_MOON,        138,            38,             19,     19,     .data.sprite = {2, sprite_moon},       { MOVE_NO }, false},
-    {TYPE_SPRITE,   ID_CLOUD_1,     CLOUD_X_START,  CLOUD_Y_START,  28,     13,     .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
-    {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,  CLOUD_Y_START,  28,     13,     .data.sprite = {2, sprite_cloud},      { MOVE_NO }, true},
-    {TYPE_FILL,     ID_SKY,         0,              0,              320,    168,    .data.fill = {COLOR_SKY_LIGHT},        { MOVE_NO }, true},
-    {TYPE_FILL,     ID_GROUND,      0,              169,            320,    72,     .data.fill = {COLOR_GROUND_LIGHT},     { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_MOON,        138,            38,             19,     19,     .data.sprite = {2, sprite_moon},        { MOVE_NO }, false},
+    {TYPE_SPRITE,   ID_CLOUD_1,     CLOUD_X_START,  CLOUD_Y_START,  28,     13,     .data.sprite = {2, sprite_cloud},       { MOVE_NO }, true},
+    {TYPE_SPRITE,   ID_CLOUD_0,     CLOUD_X_START,  CLOUD_Y_START,  28,     13,     .data.sprite = {2, sprite_cloud},       { MOVE_NO }, true},
+    {TYPE_FILL,     ID_SKY,         0,              0,              320,    168,    .data.fill = {COLOR_SKY_LIGHT},         { MOVE_NO }, true},
+    {TYPE_FILL,     ID_GROUND,      0,              169,            320,    72,     .data.fill = {COLOR_GROUND_LIGHT},      { MOVE_NO }, true},
 };
 
 const uint16_t elements_count = sizeof(elements_list) / sizeof(element_t);
@@ -263,6 +263,11 @@ int elements_manager_set_visible(element_id_t id, bool visible)
 
 int elements_manager_set_dark_mode(bool state)
 {
+    if (dark_mode == state)
+    {
+        return 0;
+    }
+
     element_t *sky = elements_manager_find_element(ID_SKY);
     element_t *ground = elements_manager_find_element(ID_GROUND);
     element_t *moon = elements_manager_find_element(ID_MOON);

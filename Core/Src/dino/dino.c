@@ -13,17 +13,27 @@
 #include "dino/elements_manager.h"
 #include "dino/move_manager.h"
 #include "dino/score.h"
+#include "dino/enemy.h"
+#include "dino/collision.h"
 
 volatile bool game_over = true;
 volatile bool want_restart = false;
 volatile element_id_t current_dino = ID_DINO_STAND;
 float ground_speed = 0.0;
-
-//#define DEMO_MODE
+// #define DEMO_MODE
 
 void dino_update_ground_speed()
 {
-	move_manager_move_element_with_const_speed(ID_CACTUS, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+
+	if (enemy_get_current() == ID_BIRD)
+	{
+		move_manager_move_element_with_const_speed(ID_BIRD, B_X_TARGET, B_Y_TARGET, CACTUS_SPEED);
+	}
+	else
+	{
+		move_manager_move_element_with_const_speed(ID_CACTUS, C_X_TARGET, C_Y_TARGET, CACTUS_SPEED);
+	}
+
 	move_manager_move_element(ID_CLOUD_0, CLOUD_X_TARGET, CLOUD_Y_TARGET, CLOUD_SPEED);
 
 	move_manager_move_element_with_const_speed(ID_ROCK_0, ROCK_X_TARGET, ROCK_Y_TARGET, CACTUS_SPEED);
@@ -53,7 +63,6 @@ int dino_main(void)
 	ILI9341_Init();
 	ILI9341_Rotate(ILI9341_Orientation_Landscape_2);
 
-	elements_manager_set_dark_mode(true);
 	elements_manager_update_full_screen();
 	move_manager_init();
 	score_init();
@@ -64,19 +73,22 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
-
 		if (want_restart)
 		{
-			printf("reinit\n\r");
 			move_manager_stop_element(ID_CACTUS);
+			move_manager_stop_element(ID_BIRD);
 			move_manager_stop_element(current_dino);
 			elements_manager_set_visible(ID_GAME_OVER, false);
 			score_save();
 			frame_count = 0;
+			//			enemy_update();
+
 			elements_manager_move_element(ID_CACTUS, C_X_TARGET, C_Y_TARGET);
+			elements_manager_move_element(ID_BIRD, B_X_TARGET, B_Y_TARGET);
 			elements_manager_move_element(ID_DINO_STAND, D_X, D_Y);
 			elements_manager_update_full_screen();
 			score_reset();
+			enemy_init();
 			HAL_Delay(1000);
 			ground_speed = 0.0;
 			move_manager_init();
@@ -105,7 +117,6 @@ int dino_main(void)
 				dino_trigger_jump();
 			}
 #endif
-
 			dino_process_position();
 			move_manager_loop();
 			frame_time = HAL_GetTick() - last_time;
@@ -134,6 +145,13 @@ int dino_main(void)
 				elements_manager_update_element(current_dino);
 			}
 		}
+
+		// HAL_ADC_Start(&hadc1);
+		// HAL_ADC_PollForConversion(&hadc1, 1);
+		// uint32_t light = HAL_ADC_GetValue(&hadc1);
+		// // 3300 mv --> 4095
+		// light = light * 3300 / 4095;
+		// elements_manager_set_dark_mode(light > 2700);
 	}
 }
 
