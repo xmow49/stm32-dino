@@ -192,10 +192,12 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
             print_y = target_y - bitmap_y;
         }
 
-        fb_generate_background(framebuffer, print_x, print_y, fb_width, fb_height);
-        fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
-
-        ILI9341_putBitmap(print_x, print_y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
+        if (element->visible)
+        {
+            fb_generate_background(framebuffer, print_x, print_y, fb_width, fb_height);
+            fb_draw_bitmap(framebuffer, bitmap_x, bitmap_y, width, height, element->data.sprite.sprite, scale, fb_width);
+            ILI9341_putBitmap(print_x, print_y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
+        }
         // ILI9341_DrawRectangle(print_x - 1, print_y - 1, print_x + fb_width + 1, print_y + fb_height + 1, 0x0000);
         // ILI9341_putBitmap(element->x + bitmap_x, element->y, fb_width, fb_height, 1, framebuffer, fb_width * fb_height);
         element->x = target_x;
@@ -204,16 +206,20 @@ int elements_manager_move_element(element_id_t id, int16_t target_x, int16_t tar
         return 0;
     }
 
-    fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
-    ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
-
+    if (element->visible)
+    {
+        fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
+        ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
+    }
     element->x = target_x;
     element->y = target_y;
 
-    fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
-    fb_draw_bitmap(framebuffer, 0, 0, width, height, element->data.sprite.sprite, scale, width * scale);
-
-    ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
+    if (element->visible)
+    {
+        fb_generate_background(framebuffer, element->x, element->y, width * scale, height * scale);
+        fb_draw_bitmap(framebuffer, 0, 0, width, height, element->data.sprite.sprite, scale, width * scale);
+        ILI9341_putBitmap(element->x, element->y, width * scale, height * scale, 1, framebuffer, width * scale * height * scale);
+    }
 
     return 0;
 }
@@ -277,12 +283,16 @@ int elements_manager_set_dark_mode(bool state)
         sky->data.fill.color = COLOR_SKY_DARK;
         ground->data.fill.color = COLOR_GROUND_DARK;
         elements_manager_set_visible(ID_MOON, true);
+        elements_manager_set_visible(ID_CLOUD_0, false);
+        elements_manager_set_visible(ID_CLOUD_1, false);
     }
     else
     {
         sky->data.fill.color = COLOR_SKY_LIGHT;
         ground->data.fill.color = COLOR_GROUND_LIGHT;
         elements_manager_set_visible(ID_MOON, false);
+        elements_manager_set_visible(ID_CLOUD_0, true);
+        elements_manager_set_visible(ID_CLOUD_1, true);
     }
     dark_mode = state;
     return 0;

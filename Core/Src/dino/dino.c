@@ -75,6 +75,7 @@ int dino_main(void)
 	{
 		if (want_restart)
 		{
+
 			move_manager_stop_element(ID_CACTUS);
 			move_manager_stop_element(ID_BIRD);
 			move_manager_stop_element(current_dino);
@@ -86,6 +87,14 @@ int dino_main(void)
 			elements_manager_move_element(ID_CACTUS, C_X_TARGET, C_Y_TARGET);
 			elements_manager_move_element(ID_BIRD, B_X_TARGET, B_Y_TARGET);
 			elements_manager_move_element(ID_DINO_STAND, D_X, D_Y);
+
+			HAL_ADC_Start(&hadc1);
+			HAL_ADC_PollForConversion(&hadc1, 1);
+			uint32_t light = HAL_ADC_GetValue(&hadc1);
+			// 3300 mv --> 4095
+			light = light * 3300 / 4095;
+			elements_manager_set_dark_mode(light < 1200);
+
 			elements_manager_update_full_screen();
 			score_reset();
 			enemy_init();
@@ -145,13 +154,6 @@ int dino_main(void)
 				elements_manager_update_element(current_dino);
 			}
 		}
-
-		// HAL_ADC_Start(&hadc1);
-		// HAL_ADC_PollForConversion(&hadc1, 1);
-		// uint32_t light = HAL_ADC_GetValue(&hadc1);
-		// // 3300 mv --> 4095
-		// light = light * 3300 / 4095;
-		// elements_manager_set_dark_mode(light > 2700);
 	}
 }
 
