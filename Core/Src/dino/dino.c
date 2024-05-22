@@ -44,6 +44,25 @@ void dino_update_ground_speed()
 	move_manager_move_element_with_const_speed(ID_HOLE_1, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
 }
 
+void buzzer_set_freq(uint32_t freq){
+	__HAL_TIM_SET_PRESCALER(&htim1, 9);
+	uint16_t raw = ((128 * 100000) / freq) - 1;
+	__HAL_TIM_SET_AUTORELOAD(&htim1, raw);
+
+	  TIM_OC_InitTypeDef sConfigOC = {0};
+	  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	  sConfigOC.Pulse = raw / 2;
+	  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	  sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
+	  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+	  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+}
+
 int dino_main(void)
 {
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -66,6 +85,18 @@ int dino_main(void)
 	elements_manager_update_full_screen();
 	move_manager_init();
 	score_init();
+	HAL_TIM_Base_Start(&htim1);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
+	buzzer_set_freq(1250);
+
+	HAL_Delay(5000);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+
+//	__HAL_TIM
+
+//	HAL_TIM_
+
 
 	uint32_t last_time = HAL_GetTick();
 	uint32_t fps = 0;
@@ -73,6 +104,9 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
+		uint32_t a = __HAL_TIM_GET_COUNTER(&htim1);
+		//		__HAL_TIM_
+		printf("%d", a);
 		if (want_restart)
 		{
 
