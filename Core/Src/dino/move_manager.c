@@ -4,6 +4,7 @@
 #include "dino/move_manager.h"
 #include "dino/dino.h"
 #include "dino/sprites.h"
+#include "dino/sound.h"
 #include <math.h>
 typedef enum
 {
@@ -278,6 +279,7 @@ void dino_trigger_jump()
     {
         jump_status = JUMP_START;
         dino_process_jump();
+        sound_play(SOUND_JUMP);
     }
 }
 

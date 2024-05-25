@@ -18,4 +18,6 @@ void score_save();
 
 void score_erase();
 
+void score_draw();
+
 #endif /* INC_DINO_SCORE_H_ */

@@ -15,5 +15,5 @@ extern const uint16_t sprite_hole[];
 extern const uint16_t sprite_bird_down[];
 extern const uint16_t sprite_bird_up[];
 extern const uint16_t sprite_moon[];
-
+extern const uint16_t sprite_press_start[];
 #endif // SPRITES_H

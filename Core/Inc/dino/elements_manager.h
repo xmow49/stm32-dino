@@ -38,6 +38,8 @@ typedef enum
 
     ID_COPYRIGHT,
     ID_GAME_OVER,
+    ID_PRESS_RETRY,
+    ID_PRESS_START,
 
 } element_id_t;
 

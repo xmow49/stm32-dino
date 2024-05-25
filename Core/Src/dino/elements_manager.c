@@ -6,6 +6,7 @@
 #include "dino/dino.h"
 #include "dino/framebuffer.h"
 #include "dino/move_manager.h"
+#include "dino/score.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,6 +14,7 @@
 
 // clang-format off
 element_t elements_list[] = {
+    // TYPE,        ID,             X,              Y,              WIDTH,  HEIGHT,   DATA,                                     MOVE,   VISIBLE
     {TYPE_SPRITE,   ID_CROWN,       220,            8,              18,     15,     .data.sprite = {1, sprite_crown},       { MOVE_NO }, true},
     {TYPE_SPRITE,   ID_DINO_STAND,  D_X,            D_Y,            20,     22,     .data.sprite = {2, sprite_dino_stand},  { MOVE_NO }, true},
     {TYPE_SPRITE,   ID_DINO_SIT,    D_X,            D_Y+20,         28,     12,     .data.sprite = {2, sprite_dino_sit},    { MOVE_NO }, false},
@@ -21,6 +23,9 @@ element_t elements_list[] = {
     {TYPE_SPRITE,   ID_CACTUS,      C_X_START,      C_Y_START,      9,      19,     .data.sprite = {2, sprite_cactus},      { MOVE_NO }, true},
 
     {TYPE_SPRITE,   ID_GAME_OVER,   48,             53,             73,     9,      .data.sprite = {3, sprite_gameover},    { MOVE_NO }, false}, //5913
+    {TYPE_SPRITE,   ID_PRESS_RETRY, 123,            95,             73,     19,     .data.sprite = {1, sprite_press_start}, { MOVE_NO }, false}, 
+    {TYPE_SPRITE,   ID_PRESS_START, 87,             50,             73,     19,     .data.sprite = {2, sprite_press_start}, { MOVE_NO }, true}, 
+
     {TYPE_BITMAP,   ID_COPYRIGHT,   31,             178,            129,    26,     .data.sprite = {2, sprite_copyright},   { MOVE_NO }, true},
     
     {TYPE_SPRITE,   ID_ROCK_0,      45,             165,            11,     3,      .data.sprite = {1, sprite_rock},        { MOVE_NO }, true},
@@ -52,6 +57,7 @@ int elements_manager_update_full_screen()
         const element_t *element = &elements_list[i];
         elements_manager_update_element(element->id);
     }
+    score_draw();
     return 0;
 }
 
@@ -277,6 +283,7 @@ int elements_manager_set_dark_mode(bool state)
     element_t *sky = elements_manager_find_element(ID_SKY);
     element_t *ground = elements_manager_find_element(ID_GROUND);
     element_t *moon = elements_manager_find_element(ID_MOON);
+    dark_mode = state;
 
     if (state)
     {
@@ -285,6 +292,7 @@ int elements_manager_set_dark_mode(bool state)
         elements_manager_set_visible(ID_MOON, true);
         elements_manager_set_visible(ID_CLOUD_0, false);
         elements_manager_set_visible(ID_CLOUD_1, false);
+        elements_manager_update_full_screen();
     }
     else
     {
@@ -293,8 +301,8 @@ int elements_manager_set_dark_mode(bool state)
         elements_manager_set_visible(ID_MOON, false);
         elements_manager_set_visible(ID_CLOUD_0, true);
         elements_manager_set_visible(ID_CLOUD_1, true);
+        elements_manager_update_full_screen();
     }
-    dark_mode = state;
     return 0;
 }
 

@@ -17,11 +17,10 @@
 #include "dino/elements_manager.h"
 #include "dino/move_manager.h"
 #include "dino/flash.h"
+#include "dino/sound.h"
 
 static volatile uint32_t score = 0;
 static volatile uint32_t high_score = 0;
-
-static void score_draw();
 
 #define FLASH_ADDR 0x0801FC00
 
@@ -59,9 +58,13 @@ void score_update()
     {
         score_draw();
     }
+    if (score % 500 == 0)
+    {
+        sound_play(SOUND_SCORE);
+    }
 }
 
-static void score_draw()
+void score_draw()
 {
 
     ILI9341_printf(10, 10, &Font_11x18, COLOR_TEXT_CURRENT, COLOR_SKY_CURRENT, "%lu", score);

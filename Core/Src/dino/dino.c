@@ -15,6 +15,7 @@
 #include "dino/score.h"
 #include "dino/enemy.h"
 #include "dino/collision.h"
+#include "dino/sound.h"
 
 volatile bool game_over = true;
 volatile bool want_restart = false;
@@ -44,25 +45,6 @@ void dino_update_ground_speed()
 	move_manager_move_element_with_const_speed(ID_HOLE_1, HOLE_X_TARGET, HOLE_Y_TARGET, CACTUS_SPEED);
 }
 
-void buzzer_set_freq(uint32_t freq){
-	__HAL_TIM_SET_PRESCALER(&htim1, 9);
-	uint16_t raw = ((128 * 100000) / freq) - 1;
-	__HAL_TIM_SET_AUTORELOAD(&htim1, raw);
-
-	  TIM_OC_InitTypeDef sConfigOC = {0};
-	  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	  sConfigOC.Pulse = raw / 2;
-	  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-	  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-	  sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
-	  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-	  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-	  if (HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-}
-
 int dino_main(void)
 {
 	// Initialisation de l'UART2 � la vitesse de 115200 bauds/secondes (92kbits/s) PA2 : Tx  | PA3 : Rx.
@@ -74,6 +56,7 @@ int dino_main(void)
 	//		SYS_set_std_usart(UART2_ID, UART2_ID, UART2_ID);
 
 	// Initialisation du port de la led Verte (carte Nucleo)
+
 	BSP_GPIO_PinCfg(LED_GREEN_GPIO, LED_GREEN_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_HIGH);
 
 	// Initialisation du port du bouton bleu (carte Nucleo)
@@ -84,19 +67,8 @@ int dino_main(void)
 
 	elements_manager_update_full_screen();
 	move_manager_init();
+	elements_manager_set_visible(ID_PRESS_START, true);
 	score_init();
-	HAL_TIM_Base_Start(&htim1);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-
-	buzzer_set_freq(1250);
-
-	HAL_Delay(5000);
-	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-
-//	__HAL_TIM
-
-//	HAL_TIM_
-
 
 	uint32_t last_time = HAL_GetTick();
 	uint32_t fps = 0;
@@ -104,16 +76,15 @@ int dino_main(void)
 	uint32_t count = 0;
 	while (1)
 	{
-		uint32_t a = __HAL_TIM_GET_COUNTER(&htim1);
-		//		__HAL_TIM_
-		printf("%d", a);
+		sound_loop();
 		if (want_restart)
 		{
-
 			move_manager_stop_element(ID_CACTUS);
 			move_manager_stop_element(ID_BIRD);
 			move_manager_stop_element(current_dino);
 			elements_manager_set_visible(ID_GAME_OVER, false);
+			elements_manager_set_visible(ID_PRESS_START, false);
+			elements_manager_set_visible(ID_PRESS_RETRY, false);
 			score_save();
 			frame_count = 0;
 			//			enemy_update();
@@ -121,13 +92,6 @@ int dino_main(void)
 			elements_manager_move_element(ID_CACTUS, C_X_TARGET, C_Y_TARGET);
 			elements_manager_move_element(ID_BIRD, B_X_TARGET, B_Y_TARGET);
 			elements_manager_move_element(ID_DINO_STAND, D_X, D_Y);
-
-			HAL_ADC_Start(&hadc1);
-			HAL_ADC_PollForConversion(&hadc1, 1);
-			uint32_t light = HAL_ADC_GetValue(&hadc1);
-			// 3300 mv --> 4095
-			light = light * 3300 / 4095;
-			elements_manager_set_dark_mode(light < 1200);
 
 			elements_manager_update_full_screen();
 			score_reset();
@@ -182,11 +146,22 @@ int dino_main(void)
 				__disable_irq();
 				game_over = true;
 				__enable_irq();
+				sound_play(SOUND_DIE);
 				printf("Game Over\n\r");
 				score_save();
-				elements_manager_set_visible(ID_GAME_OVER, true);
 				elements_manager_update_element(current_dino);
+				elements_manager_set_visible(ID_GAME_OVER, true);
+				elements_manager_set_visible(ID_PRESS_RETRY, true);
 			}
+		}
+		else
+		{
+			HAL_ADC_Start(&hadc1);
+			HAL_ADC_PollForConversion(&hadc1, 1);
+			uint32_t light = HAL_ADC_GetValue(&hadc1);
+			// 3300 mv --> 4095
+			light = light * 3300 / 4095;
+			elements_manager_set_dark_mode(light < 1500);
 		}
 	}
 }
